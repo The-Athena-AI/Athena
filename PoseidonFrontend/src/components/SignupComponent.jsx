@@ -1,50 +1,54 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const SignupComponent = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [username, setUserName] = useState("");
   const [error, setError] = useState("");
   const [password, setPassword] = useState("");
-  const [firstLastname, setfirstLastname] = useState("");
+  const [name, setFirstLastname] = useState("");
   const [role, setRole] = useState(""); // New state for role selection
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    console.log("Form submitted!");
+
     e.preventDefault();
     setError("");
+    const registerStudent = httpsCallable(getFunctions(), "registerStudent");
+
     try {
-      if (role === "Student" && email.trim() === "") {
-        // Create user without email
-        const user = { userName: username, Name: firstLastname, Role: role };
-        await setDoc(doc(db, "Users", username), user);
-        console.log("Student Registered Successfully Without Email!");
+      // Call the Cloud Function
+      console.log("Data being sent to Cloud Function:", {
+        username,
+        name,
+        Email: email.trim() === "" ? null : email,
+        password,
+        role,
+      });
+      const response = await registerStudent({
+        username,
+        name,
+        email: email.trim() === "" ? null : email, // Handle optional email
+        password,
+        role,
+      });
+      console.log("Response from Cloud Function:", response);
+      
+
+      console.log(response.data.message);
+
+      // Navigate to the appropriate dashboard based on the role
+      if (role === "Student") {
         navigate("/student-dashboard");
-      } else {
-        // Create user with email
-        await createUserWithEmailAndPassword(auth, email, password);
-        const user = auth.currentUser;
-        if (user) {
-          await setDoc(doc(db, "Users", user.uid), {
-            Email: user.email,
-            userName: username,
-            Name: firstLastname,
-            Role: role,
-          });
-        }
-        console.log("User Registered Successfully With Email!");
-        if (role === "Student") {
-          navigate("/student-dashboard");
-        } else if (role === "Teacher") {
-          navigate("/teacher-dashboard");
-        }
+      } else if (role === "Teacher") {
+        navigate("/teacher-dashboard");
       }
+
       if (onClose) onClose();
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      console.error("Error from Cloud Function:", error);
     }
   };
 
@@ -67,23 +71,7 @@ const SignupComponent = ({ onClose }) => {
         {error && <p className="text-red-500 text-center mt-4">{error}</p>}
 
         <form onSubmit={handleSubmit} className="mt-6">
-          <div className="mb-4">
-            <label
-              htmlFor="firstLastName"
-              className="block text-sm font-medium text-yellow-400"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              id="firstLastName"
-              className="w-full mt-1 p-2 bg-gray-700 text-white rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400"
-              placeholder="Enter your name"
-              value={firstLastname}
-              onChange={(e) => setfirstLastname(e.target.value)}
-              required
-            />
-          </div>
+          
 
           <div className="mb-4">
             <label
@@ -99,6 +87,23 @@ const SignupComponent = ({ onClose }) => {
               placeholder="Create a username"
               value={username}
               onChange={(e) => setUserName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="firstLastName"
+              className="block text-sm font-medium text-yellow-400"
+            >
+              Name
+            </label>
+            <input
+              type="text"
+              id="firstLastName"
+              className="w-full mt-1 p-2 bg-gray-700 text-white rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setFirstLastname(e.target.value)}
               required
             />
           </div>
