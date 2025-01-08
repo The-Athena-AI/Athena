@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "22": "^0.0.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@heroicons/react": "^2.2.0",
     "@mui/material": "^6.3.0",
     "@react-spring/parallax": "^9.7.5",
     "@studio-freight/react-lenis": "^0.0.47",
@@ -12,7 +14,9 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.7",
+    "bcrypt": "^5.1.1",
     "bootstrap": "^5.3.3",
+    "cors": "^2.8.5",
     "firebase": "^11.0.1",
     "framer-motion": "^11.15.0",
     "lenis": "^1.1.18",
@@ -26,6 +30,7 @@
     "react-scripts": "5.0.1",
     "react-spring": "^9.7.5",
     "react-typed": "^2.0.12",
+    "uuid": "^11.0.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

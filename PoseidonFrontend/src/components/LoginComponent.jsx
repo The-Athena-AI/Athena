@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { useUserAuth } from "../context/UserAuthContext";
 
 const LoginComponent = ({ onClose }) => {
@@ -6,27 +8,62 @@ const LoginComponent = ({ onClose }) => {
   const [password, setPassword] = useState("");
   const [username, setUserName] = useState("");
   const [error, setError] = useState("");
-  const { logIn, googleSignIn } = useUserAuth();
+  const { googleSignIn } = useUserAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+  
+    const functions = getFunctions();
+    const loginUser = httpsCallable(functions, "loginUser");
+  
     try {
-      await logIn(username, email, password);
+      const response = await loginUser({
+        username: username || null,
+        email: email || null,
+        password
+      });
+  
+      console.log(response.data.message);
+  
+      // Navigate to the appropriate dashboard based on the role
+      if (response.data.role === "Student") {
+        navigate("/student-dashboard/home");
+      } else if (response.data.role === "Teacher") {
+        navigate("/teacher-dashboard/home");
+      }
+  
       if (onClose) onClose(); // Close the login modal upon success
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "An error occurred during login");
     }
-  };
+  };  
 
   const handleGoogleSignIn = async () => {
     try {
-      await googleSignIn();
-      if (onClose) onClose(); // Close the login modal upon success
+      const user = await googleSignIn(); // Sign in with Google
+      const functions = getFunctions();
+      const googleLogin = httpsCallable(functions, "googleLogin");
+  
+      const response = await googleLogin(); // No data needed; uses Firebase auth context
+  
+      console.log(response.data.message);
+  
+      // Navigate to the appropriate dashboard based on the role
+      if (response.data.role === "Student") {
+        navigate("/student-dashboard");
+      } else if (response.data.role === "Teacher") {
+        navigate("/teacher-dashboard");
+      }
+  
+      if (onClose) onClose();
     } catch (error) {
-      setError(error.message);
+      setError(error.message || "An error occurred during Google sign-in");
     }
   };
+  
+  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -47,7 +84,7 @@ const LoginComponent = ({ onClose }) => {
         {error && <p className="text-red-500 text-center mt-4">{error}</p>}
 
         <form onSubmit={handleSubmit} className="mt-6">
-        <div className="mb-4">
+          <div className="mb-4">
             <label
               htmlFor="username"
               className="block text-sm font-medium text-yellow-400"
@@ -55,13 +92,12 @@ const LoginComponent = ({ onClose }) => {
               Username
             </label>
             <input
-              type="username"
+              type="text"
               id="username"
               className="w-full mt-1 p-2 bg-gray-700 text-white rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400"
               placeholder="Enter your username"
               value={username}
               onChange={(e) => setUserName(e.target.value)}
-              required
             />
           </div>
           <div className="mb-4">

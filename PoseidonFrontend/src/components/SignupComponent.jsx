@@ -41,9 +41,9 @@ const SignupComponent = ({ onClose }) => {
 
       // Navigate to the appropriate dashboard based on the role
       if (role === "Student") {
-        navigate("/student-dashboard");
+        navigate("/student-dashboard/home");
       } else if (role === "Teacher") {
-        navigate("/teacher-dashboard");
+        navigate("/teacher-dashboard/home");
       }
 
       if (onClose) onClose();
