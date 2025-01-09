@@ -5,7 +5,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
-import GradingApp from "./components/Grading";
+import { ClassProvider } from "./contexts/ClassContext"; // Add ClassProvider
 import Navbar from "./components/Navbar";
 import "./index.css";
 import StudentDashboard from "./pages/StudentDashboard";
@@ -15,28 +15,32 @@ import Features from "./pages/Features";
 function App() {
   return (
     <UserAuthContextProvider>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/features" element={<Features />} />
-          <Route
-            path="/student-dashboard/*"
-            element={
-              // <ProtectedRoute>
-                <StudentDashboard />
-              //  </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher-dashboard/*"
-            element={
-              // <ProtectedRoute>
-                <TeacherDashboard />
-              //  </ProtectedRoute>
-            }
-          />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/features" element={<Features />} />
+        <Route
+          path="/student-dashboard/*"
+          element={
+            // <ProtectedRoute>
+            <ClassProvider>
+              <StudentDashboard />
+            </ClassProvider>
+            // </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher-dashboard/*"
+          element={
+            // <ProtectedRoute>
+            <ClassProvider>
+              <TeacherDashboard />
+            </ClassProvider>
+            // </ProtectedRoute>
+          }
+        />
+      </Routes>
     </UserAuthContextProvider>
   );
 }

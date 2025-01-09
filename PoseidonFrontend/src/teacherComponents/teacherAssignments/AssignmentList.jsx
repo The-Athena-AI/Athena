@@ -18,7 +18,15 @@ const AssignmentList = () => {
         submissionCount: 15,
         totalStudents: 20
       },
-      // Add more mock assignments as needed
+      {
+        id: 2,
+        title: "Essay: Impact of AI in Education",
+        dueDate: "2024-03-28",
+        class: "Technology & Society",
+        submissionCount: 1,
+        totalStudents: 1,
+        hasDemo: true
+      }
     ];
     setAssignments(mockAssignments);
     setLoading(false);
@@ -29,7 +37,7 @@ const AssignmentList = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Assignments</h1>
         <Link 
-          to="/teacher/assignments/create"
+          to="create"
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Create New Assignment
@@ -59,13 +67,13 @@ const AssignmentList = () => {
                   </p>
                   <div className="mt-2 space-x-2">
                     <Link 
-                      to={`/teacher/assignments/${assignment.id}`}
+                      to={`${assignment.id}`}
                       className="text-blue-500 hover:underline"
                     >
                       View
                     </Link>
                     <Link 
-                      to={`/teacher/assignments/${assignment.id}/edit`}
+                      to={`${assignment.id}/edit`}
                       className="text-green-500 hover:underline"
                     >
                       Edit

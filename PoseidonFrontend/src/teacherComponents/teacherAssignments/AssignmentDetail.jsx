@@ -14,16 +14,39 @@ const AssignmentDetail = () => {
       try {
         const mockAssignment = {
           id,
-          title: 'Example Assignment',
-          description: 'This is an example assignment',
-          dueDate: '2024-04-01T23:59',
-          class: 'Web Development 101',
+          title: id === '2' ? 'Essay: Impact of AI in Education' : 'Example Assignment',
+          description: id === '2' ? 
+            'Write a 500-word essay discussing the potential impacts of Artificial Intelligence on modern education. Consider both positive and negative aspects, and provide specific examples.' :
+            'This is an example assignment',
+          dueDate: id === '2' ? '2024-03-28T23:59' : '2024-04-01T23:59',
+          class: id === '2' ? 'Technology & Society' : 'Web Development 101',
           points: 100,
           aiGradingEnabled: true,
-          aiGradingInstructions: 'Grade based on clarity and completeness'
+          aiGradingInstructions: id === '2' ? 
+            'Grade based on: 1) Understanding of AI concepts 2) Critical analysis 3) Clear examples 4) Writing quality' :
+            'Grade based on clarity and completeness'
         };
 
-        const mockSubmissions = [
+        const mockSubmissions = id === '2' ? [
+          {
+            id: 'demo1',
+            studentName: 'Demo Student',
+            submittedAt: '2024-03-27T15:30',
+            status: 'pending',
+            grade: null,
+            content: `Artificial Intelligence has emerged as a transformative force in education, revolutionizing how we teach and learn. This essay explores the significant impacts of AI on modern education, examining both its benefits and potential challenges.
+
+One of the most prominent positive impacts of AI in education is personalized learning. AI algorithms can analyze student performance data to create customized learning paths, adapting to each student's pace and learning style. For example, adaptive learning platforms use AI to identify knowledge gaps and automatically adjust content difficulty, ensuring students receive targeted instruction where they need it most.
+
+Furthermore, AI has enhanced administrative efficiency in educational institutions. Automated grading systems can handle objective assessments, freeing teachers to focus on more meaningful interactions with students. AI-powered chatbots provide 24/7 support for common student queries, improving accessibility to information and reducing administrative burden.
+
+However, the integration of AI in education also raises concerns. There's a risk of over-reliance on technology, potentially diminishing human interaction in the learning process. The "digital divide" may widen as schools with limited resources struggle to implement AI solutions, creating educational inequalities.
+
+Additionally, data privacy and security concerns emerge as AI systems collect and analyze student data. Educational institutions must carefully balance the benefits of personalized learning with protecting student privacy and ensuring responsible data management.
+
+Looking ahead, AI's role in education will likely expand, but success depends on thoughtful implementation that preserves the irreplaceable human elements of teaching while leveraging technology's advantages. The key lies in using AI as a tool to enhance, rather than replace, traditional educational approaches.`
+          }
+        ] : [
           {
             id: 1,
             studentName: 'John Doe',
@@ -62,7 +85,7 @@ const AssignmentDetail = () => {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">{assignment.title}</h1>
           <Link
-            to={`/teacher/assignments/${id}/edit`}
+            to="edit"
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
             Edit Assignment
@@ -75,7 +98,7 @@ const AssignmentDetail = () => {
             <p><span className="font-medium">Class:</span> {assignment.class}</p>
             <p><span className="font-medium">Due Date:</span> {assignment.dueDate}</p>
             <p><span className="font-medium">Points:</span> {assignment.points}</p>
-            <p><span className="font-medium">AI Grading:</span> {assignment.aiGradingEnabled ? 'Enabled' : 'Disabled'}</p>
+            <p><span className="font-medium">Athena Grading:</span> {assignment.aiGradingEnabled ? 'Enabled' : 'Disabled'}</p>
           </div>
           
           <div className="bg-gray-50 p-4 rounded">
@@ -120,7 +143,7 @@ const AssignmentDetail = () => {
                   <td className="px-6 py-4 whitespace-nowrap">{submission.grade || '-'}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <Link
-                      to={`/teacher/assignments/${id}/submissions/${submission.id}`}
+                      to={`submissions/${submission.id}`}
                       className="text-blue-600 hover:text-blue-900"
                     >
                       View

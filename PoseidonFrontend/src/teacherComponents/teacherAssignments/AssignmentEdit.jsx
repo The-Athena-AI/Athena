@@ -19,25 +19,37 @@ const AssignmentEdit = () => {
 
   const [classes] = useState([
     { id: 1, name: 'Web Development 101' },
-    { id: 2, name: 'Advanced Programming' },
+    { id: 2, name: 'Technology & Society' },
   ]);
 
   useEffect(() => {
-    // TODO: Fetch assignment data from backend
-    // Mock data for now
     const fetchAssignment = async () => {
       try {
-        // Simulate API call
-        const mockAssignment = {
-          title: 'Example Assignment',
-          description: 'This is an example assignment',
-          dueDate: '2024-04-01T23:59',
-          classId: '1',
-          points: 100,
-          aiGradingEnabled: true,
-          aiGradingInstructions: 'Grade based on clarity and completeness'
-        };
-        setFormData(mockAssignment);
+        // Mock data for demo assignment
+        if (id === '2') {
+          const demoAssignment = {
+            title: 'Essay: Impact of AI in Education',
+            description: 'Write a 500-word essay discussing the potential impacts of Artificial Intelligence on modern education. Consider both positive and negative aspects, and provide specific examples.',
+            dueDate: '2024-03-28T23:59',
+            classId: '2',
+            points: 100,
+            aiGradingEnabled: true,
+            aiGradingInstructions: 'Grade based on: 1) Understanding of AI concepts 2) Critical analysis 3) Clear examples 4) Writing quality'
+          };
+          setFormData(demoAssignment);
+        } else {
+          // Regular mock assignment
+          const mockAssignment = {
+            title: 'Example Assignment',
+            description: 'This is an example assignment',
+            dueDate: '2024-04-01T23:59',
+            classId: '1',
+            points: 100,
+            aiGradingEnabled: true,
+            aiGradingInstructions: 'Grade based on clarity and completeness'
+          };
+          setFormData(mockAssignment);
+        }
         setLoading(false);
       } catch (error) {
         console.error('Error fetching assignment:', error);
@@ -52,7 +64,7 @@ const AssignmentEdit = () => {
     e.preventDefault();
     // TODO: Submit updates to backend
     console.log('Updating assignment:', formData);
-    navigate('/teacher/assignments');
+    navigate('..');  // Navigate back to assignment detail
   };
 
   const handleChange = (e) => {
@@ -72,7 +84,6 @@ const AssignmentEdit = () => {
       <h1 className="text-2xl font-bold mb-6">Edit Assignment</h1>
       
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Same form fields as AssignmentCreate */}
         <div>
           <label className="block text-sm font-medium mb-1">Title</label>
           <input
@@ -85,8 +96,87 @@ const AssignmentEdit = () => {
           />
         </div>
 
-        {/* ... Other form fields ... */}
-        
+        <div>
+          <label className="block text-sm font-medium mb-1">Class</label>
+          <select
+            name="classId"
+            value={formData.classId}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          >
+            <option value="">Select a class</option>
+            {classes.map(cls => (
+              <option key={cls.id} value={cls.id}>{cls.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Description</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            rows="4"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Due Date</label>
+          <input
+            type="datetime-local"
+            name="dueDate"
+            value={formData.dueDate}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Points</label>
+          <input
+            type="number"
+            name="points"
+            value={formData.points}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            min="0"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              name="aiGradingEnabled"
+              checked={formData.aiGradingEnabled}
+              onChange={handleChange}
+            />
+            <span className="text-sm font-medium">Enable Athena Grading</span>
+          </label>
+        </div>
+
+        {formData.aiGradingEnabled && (
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Athena Grading Instructions
+            </label>
+            <textarea
+              name="aiGradingInstructions"
+              value={formData.aiGradingInstructions}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              rows="3"
+              placeholder="Provide instructions for AI grading..."
+            />
+          </div>
+        )}
+
         <div className="flex space-x-4">
           <button
             type="submit"
@@ -96,7 +186,7 @@ const AssignmentEdit = () => {
           </button>
           <button
             type="button"
-            onClick={() => navigate('/teacher/assignments')}
+            onClick={() => navigate('..')}
             className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
           >
             Cancel

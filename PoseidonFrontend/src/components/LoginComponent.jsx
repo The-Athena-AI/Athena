@@ -9,7 +9,7 @@ const LoginComponent = ({ onClose }) => {
   const [username, setUserName] = useState("");
   const [error, setError] = useState("");
   const { logIn, googleSignIn } = useUserAuth();
-
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");

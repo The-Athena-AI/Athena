@@ -4,20 +4,6 @@ import { useClass } from '../contexts/ClassContext';
 import Calendar from './studentHomeComponents/Calendar';
 import MasteryProgress from './studentHomeComponents/MasteryProgress';
 import MessagesPanel from './studentHomeComponents/MessagesPanel';
-import { db } from '../firebase';
-
-import { 
-  collection, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  query, 
-  where, 
-  getDocs,
-  addDoc,
-  updateDoc,
-  writeBatch
-} from 'firebase/firestore';
 
 const StudentHome = () => {
 

@@ -19,7 +19,7 @@ const TeacherDashboard = () => {
           <Routes>
             <Route path="home" element={<TeacherHome />} />
             <Route path="classes" element={<TeacherClasses />} />
-            <Route path="assignments" element={<TeacherAssignments />} />
+            <Route path="assignments/*" element={<TeacherAssignments />} />
             <Route path="/" element={<Navigate to="home" replace />} />
           </Routes>
         </div>

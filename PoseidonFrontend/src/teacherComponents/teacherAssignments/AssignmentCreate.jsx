@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const AssignmentCreate = ({ onComplete }) => {
+const AssignmentCreate = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -15,14 +17,14 @@ const AssignmentCreate = ({ onComplete }) => {
 
   const [classes] = useState([
     { id: 1, name: 'Web Development 101' },
-    { id: 2, name: 'Advanced Programming' },
+    { id: 2, name: 'Technology & Society' },
   ]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     // TODO: Submit to backend
     console.log('Submitting assignment:', formData);
-    onComplete();
+    navigate('..');  // Navigate back to assignment list
   };
 
   const handleChange = (e) => {
@@ -140,7 +142,7 @@ const AssignmentCreate = ({ onComplete }) => {
           </button>
           <button
             type="button"
-            onClick={onComplete}
+            onClick={() => navigate('..')}
             className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
           >
             Cancel
