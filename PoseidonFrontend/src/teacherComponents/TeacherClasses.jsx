@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useClass } from '../contexts/ClassContext';
 import { FaChalkboard, FaCopy, FaPlus } from 'react-icons/fa';
+import ManageClass from './ManageClass';
 
 const TeacherClasses = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedClass, setSelectedClass] = useState(null);
   const [className, setClassName] = useState('');
   const { userClasses, createClass, loading } = useClass();
 
@@ -69,7 +71,7 @@ const TeacherClasses = () => {
 
               <button 
                 className="w-full mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
-                onClick={() => {/* Add navigation to class detail view */}}
+                onClick={() => setSelectedClass(classItem)}
               >
                 Manage Class →
               </button>
@@ -114,6 +116,18 @@ const TeacherClasses = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Manage Class Modal */}
+      {selectedClass && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
+            <ManageClass 
+              classData={selectedClass} 
+              onClose={() => setSelectedClass(null)}
+            />
           </div>
         </div>
       )}

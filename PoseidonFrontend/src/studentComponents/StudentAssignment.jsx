@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react';
+import { useClass } from '../contexts/ClassContext';
 import AssignmentList from './studentAssignment/AssignmentList';
 import AssignmentDetails from './studentAssignment/AssignmentDetails';
 import GradingForm from './studentAssignment/GradingForm';
@@ -10,6 +11,32 @@ const StudentAssignment = () => {
   const [gradingMode, setGradingMode] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [assignments, setAssignments] = useState([]);
+  const { enrolledClasses, getClassAssignments } = useClass();
+
+  useEffect(() => {
+    const fetchAllAssignments = async () => {
+      try {
+        const allAssignments = await Promise.all(
+          enrolledClasses.map(async (classItem) => {
+            const classAssignments = await getClassAssignments(classItem.id);
+            return classAssignments.map(assignment => ({
+              ...assignment,
+              className: classItem.name,
+              classId: classItem.id
+            }));
+          })
+        );
+        setAssignments(allAssignments.flat());
+      } catch (error) {
+        console.error('Error fetching assignments:', error);
+      }
+    };
+
+    if (enrolledClasses.length > 0) {
+      fetchAllAssignments();
+    }
+  }, [enrolledClasses]);
 
   const handleGradeSubmit = () => {
     setGradingMode(false);
@@ -57,21 +84,13 @@ const StudentAssignment = () => {
   );
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div className="p-6">
       {selectedAssignment && (
         <button
           onClick={handleBack}
-          style={{
-            marginBottom: '20px',
-            padding: '8px 16px',
-            borderRadius: '5px',
-            border: 'none',
-            backgroundColor: '#34495e',
-            color: 'white',
-            cursor: 'pointer'
-          }}
+          className="mb-6 flex items-center text-blue-600 hover:text-blue-800"
         >
-          ← Back to Assignments
+          <span>← Back to Assignments</span>
         </button>
       )}
 
@@ -79,6 +98,7 @@ const StudentAssignment = () => {
         <>
           {renderFilters()}
           <AssignmentList 
+            assignments={assignments}
             onSelectAssignment={setSelectedAssignment} 
             filterStatus={filterStatus}
             searchTerm={searchTerm}

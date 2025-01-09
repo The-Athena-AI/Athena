@@ -8,8 +8,7 @@ const LoginComponent = ({ onClose }) => {
   const [password, setPassword] = useState("");
   const [username, setUserName] = useState("");
   const [error, setError] = useState("");
-  const { googleSignIn } = useUserAuth();
-  const navigate = useNavigate();
+  const { logIn, googleSignIn } = useUserAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,9 +35,9 @@ const LoginComponent = ({ onClose }) => {
   
       if (onClose) onClose(); // Close the login modal upon success
     } catch (err) {
-      setError(err.message || "An error occurred during login");
+      setError(err.message);
     }
-  };  
+  };
 
   const handleGoogleSignIn = async () => {
     try {
@@ -59,11 +58,9 @@ const LoginComponent = ({ onClose }) => {
   
       if (onClose) onClose();
     } catch (error) {
-      setError(error.message || "An error occurred during Google sign-in");
+      setError(error.message);
     }
   };
-  
-  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -84,7 +81,7 @@ const LoginComponent = ({ onClose }) => {
         {error && <p className="text-red-500 text-center mt-4">{error}</p>}
 
         <form onSubmit={handleSubmit} className="mt-6">
-          <div className="mb-4">
+        <div className="mb-4">
             <label
               htmlFor="username"
               className="block text-sm font-medium text-yellow-400"
@@ -92,12 +89,13 @@ const LoginComponent = ({ onClose }) => {
               Username
             </label>
             <input
-              type="text"
+              type="username"
               id="username"
               className="w-full mt-1 p-2 bg-gray-700 text-white rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400"
               placeholder="Enter your username"
               value={username}
               onChange={(e) => setUserName(e.target.value)}
+              required
             />
           </div>
           <div className="mb-4">

@@ -1,77 +1,71 @@
-import React, { useState, useEffect } from "react";
-import { fetchAssignments } from "./BackendAPI";
+import React from 'react';
+import { FaBook, FaClock, FaCheckCircle, FaHourglassHalf } from 'react-icons/fa';
 
-const AssignmentList = ({ onSelectAssignment, filterStatus, searchTerm }) => {
-  const [assignments, setAssignments] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const loadAssignments = async () => {
-      try {
-        setIsLoading(true);
-        const data = await fetchAssignments();
-        setAssignments(data);
-      } catch (err) {
-        setError('Failed to load assignments');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadAssignments();
-  }, []);
-
-  // Filter assignments based on search term and status
+const AssignmentList = ({ assignments, onSelectAssignment, filterStatus, searchTerm }) => {
   const filteredAssignments = assignments.filter(assignment => {
-    const matchesSearch = assignment.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || assignment.status === filterStatus;
+    const matchesSearch = assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         assignment.className.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === 'all' ? true :
+                         filterStatus === 'completed' ? assignment.completed :
+                         !assignment.completed;
     return matchesSearch && matchesStatus;
   });
 
-  if (isLoading) return <div>Loading assignments...</div>;
-  if (error) return <div>Error: {error}</div>;
+  const getStatusColor = (assignment) => {
+    const dueDate = new Date(assignment.dueDate);
+    const now = new Date();
+    
+    if (assignment.completed) return 'text-green-500';
+    if (dueDate < now) return 'text-red-500';
+    return 'text-yellow-500';
+  };
+
+  const getStatusIcon = (assignment) => {
+    if (assignment.completed) return <FaCheckCircle className="text-green-500" />;
+    return <FaHourglassHalf className="text-yellow-500" />;
+  };
 
   return (
-    <div style={{ padding: "20px", backgroundColor: "#f9f9f9", borderRadius: "10px" }}>
-      <h2 style={{ color: "#2C3E50", marginBottom: "20px" }}>Assignments</h2>
+    <div className="space-y-4">
       {filteredAssignments.length === 0 ? (
-        <p style={{ textAlign: 'center', color: '#7f8c8d' }}>
+        <div className="text-center py-8 text-gray-500">
           No assignments found
-        </p>
+        </div>
       ) : (
-        <ul style={{ listStyleType: "none", padding: 0 }}>
-          {filteredAssignments.map((assignment) => (
-            <li
-              key={assignment.id}
-              style={{
-                padding: "10px",
-                margin: "10px 0",
-                backgroundColor: "#fff",
-                border: "1px solid #ddd",
-                borderRadius: "5px",
-                cursor: "pointer",
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}
-              onClick={() => onSelectAssignment(assignment)}
-            >
-              <div>
-                <span style={{ fontWeight: 'bold' }}>{assignment.title}</span>
-                <span style={{ 
-                  marginLeft: '10px', 
-                  fontSize: '0.9em', 
-                  color: assignment.status === 'completed' ? '#27ae60' : '#e74c3c' 
-                }}>
-                  ({assignment.status})
-                </span>
+        filteredAssignments.map((assignment) => (
+          <div
+            key={assignment.id}
+            className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 cursor-pointer"
+            onClick={() => onSelectAssignment(assignment)}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <FaBook className="text-blue-500" />
+                  <h3 className="font-semibold text-lg">{assignment.title}</h3>
+                </div>
+                <p className="text-sm text-gray-600 mb-2">
+                  Class: {assignment.className}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {assignment.description?.substring(0, 100)}
+                  {assignment.description?.length > 100 ? '...' : ''}
+                </p>
               </div>
-              <span style={{ fontSize: '0.9em', color: '#7f8c8d' }}>
-                Due: {new Date(assignment.dueDate).toLocaleDateString()}
-              </span>
-            </li>
-          ))}
-        </ul>
+              <div className="flex flex-col items-end">
+                <div className="flex items-center gap-2">
+                  <FaClock className={getStatusColor(assignment)} />
+                  <span className="text-sm text-gray-600">
+                    Due: {new Date(assignment.dueDate).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="mt-2">
+                  {getStatusIcon(assignment)}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
       )}
     </div>
   );

@@ -1,177 +1,112 @@
-import React, { useState } from "react";
-import FileUpload from "./FileUpload";
-import axios from "axios";
+import React, { useState } from 'react';
+import { FaStar, FaExclamationCircle } from 'react-icons/fa';
 
-const GradingForm = ({ onSubmit }) => {
-  const [submissionText, setSubmissionText] = useState("");
-  const [files, setFiles] = useState([]);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [aiResponse, setAiResponse] = useState(null);
-  const [error, setError] = useState(null);
-  const [category, setCategory] = useState("");
-  const [aiInstruction, setAiInstruction] = useState("");
+const GradingForm = ({ assignment, onSubmit }) => {
+  const [answers, setAnswers] = useState('');
+  const [selfAssessment, setSelfAssessment] = useState(0);
+  const [confidence, setConfidence] = useState(3);
+  const [errors, setErrors] = useState({});
 
-  const handleSubmit = async () => {
-    try {
-      setIsProcessing(true);
-      setError(null);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = {};
 
-      if (!submissionText && files.length === 0) {
-        throw new Error('Please provide either text or file submission');
-      }
-
-      const formData = new FormData();
-      files.forEach(file => formData.append('file', file));
-      formData.append('text', submissionText);
-      formData.append('category', category);
-      formData.append('instruction', aiInstruction);
-
-      const response = await axios.post('https://0307-2603-7000-b13e-185b-95c1-ff83-ce2e-c671.ngrok-free.app/grade', 
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-
-      setAiResponse(response.data);
-    } catch (err) {
-      setError(err.response?.data?.error || 'Grading failed');
-    } finally {
-      setIsProcessing(false);
+    if (!answers.trim()) {
+      validationErrors.answers = 'Please provide your answers';
     }
+    if (selfAssessment === 0) {
+      validationErrors.selfAssessment = 'Please rate your understanding';
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    onSubmit({
+      answers,
+      selfAssessment,
+      confidence,
+      submittedAt: new Date().toISOString()
+    });
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <h2 style={{ color: '#2C3E50', marginBottom: '20px' }}>
-        AI Assignment Grading
-      </h2>
-
-      {error && (
-        <div style={{ 
-          padding: '10px', 
-          backgroundColor: '#FADBD8', 
-          color: '#C0392B',
-          borderRadius: '5px',
-          marginBottom: '20px' 
-        }}>
-          {error}
-        </div>
-      )}
-
-      <div style={{ marginBottom: '20px' }}>
-        <label style={{ display: 'block', marginBottom: '10px', color: '#2C3E50' }}>
-          Select Subject
-        </label>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '10px',
-            borderRadius: '5px',
-            border: '1px solid #BDC3C7',
-            marginBottom: '20px'
-          }}
-        >
-          <option value="">--Select--</option>
-          <option value="essay">Essay</option>
-          <option value="chemistry">Chemistry</option>
-          <option value="physics">Physics</option>
-          <option value="math">Math</option>
-          <option value="code">Code</option>
-        </select>
-
-        <label style={{ display: 'block', marginBottom: '10px', color: '#2C3E50' }}>
-          AI Instructions
-        </label>
-        <input
-          type="text"
-          value={aiInstruction}
-          onChange={(e) => setAiInstruction(e.target.value)}
-          placeholder="Instructions for AI"
-          style={{
-            width: '100%',
-            padding: '10px',
-            borderRadius: '5px',
-            border: '1px solid #BDC3C7',
-            marginBottom: '20px'
-          }}
-        />
-
-        <label style={{ display: 'block', marginBottom: '10px', color: '#2C3E50' }}>
-          Text Submission
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Your Answers
         </label>
         <textarea
-          placeholder="Enter or paste the submission text here..."
-          value={submissionText}
-          onChange={(e) => setSubmissionText(e.target.value)}
-          style={{
-            width: '100%',
-            minHeight: '200px',
-            padding: '10px',
-            borderRadius: '5px',
-            border: '1px solid #BDC3C7',
-            marginBottom: '20px'
-          }}
+          value={answers}
+          onChange={(e) => setAnswers(e.target.value)}
+          rows={6}
+          className={`w-full rounded-lg border ${
+            errors.answers ? 'border-red-500' : 'border-gray-300'
+          } shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
+          placeholder="Type your answers here..."
         />
-
-        <label style={{ display: 'block', marginBottom: '10px', color: '#2C3E50' }}>
-          File Submission
-        </label>
-        <FileUpload
-          onFileSelect={setFiles}
-          acceptedFileTypes=".pdf, .doc, .docx, .txt, .png, .jpg, .jpeg"
-          maxFileSizeMB={10}
-        />
-
-        <button
-          onClick={handleSubmit}
-          disabled={isProcessing || (!submissionText && files.length === 0)}
-          style={{
-            marginTop: '20px',
-            padding: '10px 20px',
-            backgroundColor: isProcessing ? '#95A5A6' : '#3498DB',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: isProcessing ? 'not-allowed' : 'pointer',
-            transition: 'background-color 0.3s ease'
-          }}
-        >
-          {isProcessing ? 'Processing...' : 'Grade Assignment'}
-        </button>
+        {errors.answers && (
+          <p className="mt-1 text-sm text-red-600 flex items-center">
+            <FaExclamationCircle className="mr-1" />
+            {errors.answers}
+          </p>
+        )}
       </div>
 
-      {aiResponse && (
-        <div style={{
-          backgroundColor: '#F8F9F9',
-          padding: '20px',
-          borderRadius: '5px',
-          border: '1px solid #E5E7E9'
-        }}>
-          <h3 style={{ color: '#2C3E50', marginBottom: '15px' }}>AI Grading Results</h3>
-          
-          <div style={{ marginBottom: '15px' }}>
-            <p>{aiResponse.grading_result}</p>
-          </div>
-{/* 
-          <button
-            onClick={() => onSubmit(aiResponse)}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#27AE60',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer'
-            }}
-          >
-            Accept and Submit Grade
-          </button> */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Rate Your Understanding (1-5)
+        </label>
+        <div className="flex gap-2">
+          {[1, 2, 3, 4, 5].map((rating) => (
+            <button
+              key={rating}
+              type="button"
+              onClick={() => setSelfAssessment(rating)}
+              className={`p-2 rounded-full ${
+                selfAssessment >= rating
+                  ? 'text-yellow-400 hover:text-yellow-500'
+                  : 'text-gray-300 hover:text-gray-400'
+              }`}
+            >
+              <FaStar size={24} />
+            </button>
+          ))}
         </div>
-      )}
-    </div>
+        {errors.selfAssessment && (
+          <p className="mt-1 text-sm text-red-600 flex items-center">
+            <FaExclamationCircle className="mr-1" />
+            {errors.selfAssessment}
+          </p>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Confidence Level
+        </label>
+        <input
+          type="range"
+          min="1"
+          max="5"
+          value={confidence}
+          onChange={(e) => setConfidence(Number(e.target.value))}
+          className="w-full"
+        />
+        <div className="flex justify-between text-sm text-gray-500">
+          <span>Not Confident</span>
+          <span>Very Confident</span>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        Submit Assignment
+      </button>
+    </form>
   );
 };
 

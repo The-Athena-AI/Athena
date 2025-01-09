@@ -21,12 +21,6 @@ export const registerStudent = onCall(async (request) => {
   }
 
   try {
-    // Check if the username is unique
-    const usernameSnapshot = await db.collection("Users").where("userName", "==", username).get();
-    if (!usernameSnapshot.empty) {
-      throw new HttpsError("already-exists", "Username is already taken.");
-    }
-
     let userId;
 
     if (email) {
@@ -42,21 +36,22 @@ export const registerStudent = onCall(async (request) => {
       userId = db.collection("Users").doc().id;
     }
 
-    // Save user metadata in Firestore
+    // Save user metadata in Firestore - Note the lowercase field names
     const hashedPassword = await bcrypt.hash(password, 10);
-// Save user metadata in Firestore
     await db.collection("Users").doc(userId).set({
-        userName: username,
-        Name: name,
-        Role: role,
-        Email: email || null,
-        Password: hashedPassword,
+      userName: username,
+      name: name,
+      role: role,
+      email: email || null,
+      password: hashedPassword,
+      createdAt: new Date().toISOString(),
+      enrolledClasses: {},
+      classes: {}
     });
 
-
-    return { message: "Student registered successfully", uid: userId };
+    return { message: "User registered successfully", uid: userId };
   } catch (error) {
-    console.error("Error registering student:", error);
+    console.error("Error registering user:", error);
     throw new HttpsError("internal", error.message || "Registration failed.");
   }
 });

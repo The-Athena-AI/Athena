@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import { useUserAuth } from "../context/UserAuthContext";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 const SignupComponent = ({ onClose }) => {
   const [email, setEmail] = useState("");
@@ -10,6 +13,7 @@ const SignupComponent = ({ onClose }) => {
   const [name, setFirstLastname] = useState("");
   const [role, setRole] = useState(""); // New state for role selection
   const navigate = useNavigate();
+  const { setUser } = useUserAuth();
 
   const handleSubmit = async (e) => {
     console.log("Form submitted!");
@@ -19,25 +23,19 @@ const SignupComponent = ({ onClose }) => {
     const registerStudent = httpsCallable(getFunctions(), "registerStudent");
 
     try {
-      // Call the Cloud Function
-      console.log("Data being sent to Cloud Function:", {
-        username,
-        name,
-        Email: email.trim() === "" ? null : email,
-        password,
-        role,
-      });
+      // Add console log to verify the role being sent
+      console.log('Role being sent:', role);
+      
       const response = await registerStudent({
         username,
         name,
-        email: email.trim() === "" ? null : email, // Handle optional email
+        email: email.trim() === "" ? null : email,
         password,
         role,
       });
-      console.log("Response from Cloud Function:", response);
       
+      console.log('Response from registration:', response.data);
 
-      console.log(response.data.message);
 
       // Navigate to the appropriate dashboard based on the role
       if (role === "Student") {
@@ -49,6 +47,7 @@ const SignupComponent = ({ onClose }) => {
       if (onClose) onClose();
     } catch (error) {
       console.error("Error from Cloud Function:", error);
+      setError(error.message);
     }
   };
 

@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useClass } from '../contexts/ClassContext';
 import { FaChalkboardTeacher, FaUserGraduate } from 'react-icons/fa';
 
 const StudentClasses = () => {
   const [classCode, setClassCode] = useState('');
-  const { enrolledClasses, joinClass, loading } = useClass();
+  const { enrolledClasses, joinClass, loading, fetchUserClasses } = useClass();
+
+  // Add useEffect to fetch classes when component mounts
+  useEffect(() => {
+    fetchUserClasses();
+  }, []);
 
   const handleJoinClass = async (e) => {
     e.preventDefault();
@@ -12,16 +17,20 @@ const StudentClasses = () => {
       await joinClass(classCode.toUpperCase());
       setClassCode('');
       alert('Successfully joined the class!');
+      // Fetch classes again after joining
+      await fetchUserClasses();
     } catch (error) {
       alert('Error joining class: ' + error.message);
     }
   };
 
+  console.log('Enrolled Classes:', enrolledClasses); // Add this for debugging
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">My Classes</h1>
 
-      {/* Join Class Section - Always visible */}
+      {/* Join Class Section */}
       <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
         <div className="flex items-center gap-4 mb-4">
           <div className="bg-blue-100 p-3 rounded-full">
@@ -49,7 +58,7 @@ const StudentClasses = () => {
       {/* Enrolled Classes Section */}
       {loading ? (
         <div className="text-center py-8">Loading...</div>
-      ) : enrolledClasses.length > 0 ? (
+      ) : enrolledClasses && enrolledClasses.length > 0 ? (
         <div>
           <div className="flex items-center gap-3 mb-6">
             <FaUserGraduate className="text-gray-600 text-xl" />
