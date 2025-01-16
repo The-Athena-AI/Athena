@@ -1,4 +1,14 @@
-"""may not need depending on how the assignments are stored on the database"""
+"""
+may not need depending on how the assignments are stored on the database
+
+id - used to get the actual file from the database
+rubricId - used to match up the assignment with its answer key
+name - name of the assignment. will likely only be used for front-end stuff
+teachers - a list of people who have permission to edit the file
+
+may be added in the future:
+something will prob be added to store the questions so we don't need to retrieve them from the database every time
+"""
 
 class Assignment:
     __slots__ = ["__id", "__rubricId", "__name", "__teachers"]
