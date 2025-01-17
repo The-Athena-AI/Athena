@@ -4,7 +4,7 @@ from google.cloud import vision
 import os
 from os import listdir
 from os.path import isfile, join
-from my_timer import my_timer
+from Athena.references.my_timer import my_timer
 import time
 
 def detect_text(path):
