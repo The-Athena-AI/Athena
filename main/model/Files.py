@@ -1,6 +1,4 @@
 """
-may not need depending on how the assignments and rubrics are stored on the database
-
 Assignment:
 id - used to get the actual file from the database
 rubricId - used to match up the assignment with its answer key
@@ -10,13 +8,10 @@ file - the actual file that contains the assignment
 
 Rubric:
 id - used to get the actual file from the database
-assigmentId - used to match up the answer key with its assignment
+-- no assignmentId because the rubric is not tied to a specific assignment
 name - name of the assignment. will likely only be used for front-end stuff
 teachers - a list of people who have permission to edit the file
 file - the actual file that contains the answer key
-
-may be added in the future:
-something will prob be added to store the questions and answers so we don't need to retrieve them from the database every time
 """
 
 class Assignment:
@@ -47,19 +42,16 @@ class Assignment:
 
 
 class Rubric:
-    __slots__ = ["__id", "__assignmentId", "__name", "__teachers", "__file"]
+    __slots__ = ["__id", "__name", "__teachers", "__file"]
 
-    def __init__(self, id, assignmentId, name, teacher, file):
+    def __init__(self, id, name, teacher, file):
         self.__id = id
-        self.__assignmentId = assignmentId
         self.__name = name
         self.__teachers = [teacher]
         self.__file = file
 
     def get_id(self):
         return self.__id
-    def get_assignmentId(self):
-        return self.__assignmentId
     def get_name(self):
         return self.__name
     def get_teachers(self):
