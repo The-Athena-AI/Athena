@@ -5,7 +5,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
-import { ClassProvider } from "./contexts/ClassContext"; // Add ClassProvider
+import { ClassProvider } from "./contexts/ClassContext";
 import Navbar from "./components/Navbar";
 import "./index.css";
 import StudentDashboard from "./pages/StudentDashboard";

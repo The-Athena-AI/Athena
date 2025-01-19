@@ -1,55 +1,239 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import TeacherRubric from './TeacherRubric';
+import { 
+  FaSearch, 
+  FaChevronLeft, 
+  FaChevronRight, 
+  FaExpandAlt, 
+  FaLightbulb, 
+  FaComments, 
+  FaCheckCircle,
+  FaPlus,
+  FaMinus,
+  FaMicrophone,
+  FaChevronDown
+} from 'react-icons/fa';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+
+
 
 const AssignmentGrades = () => {
   const { id, submissionId } = useParams();
   const [submission, setSubmission] = useState(null);
-  const [grade, setGrade] = useState('');
-  const [feedback, setFeedback] = useState('');
   const [loading, setLoading] = useState(true);
-  const [aiSuggestion, setAiSuggestion] = useState(null);
-  const [isAiGrading, setIsAiGrading] = useState(false);
+  const [activeTab, setActiveTab] = useState('student-response');
+  const [showJustifications, setShowJustifications] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [currentMark, setCurrentMark] = useState('A');
+  const [progressStatus, setProgressStatus] = useState('Progressing well');
+  const [selectedCriterion, setSelectedCriterion] = useState(null);
+  const [rubricFeedback, setRubricFeedback] = useState(null);
+  const [showSpeechBox, setShowSpeechBox] = useState(false);
+  const [justification, setJustification] = useState('');
+  const [gpa, setGpa] = useState(0);
+  const [criteriaGrades, setCriteriaGrades] = useState({
+    'Understanding': {
+      grade: 3,
+      status: 'Satisfactory',
+      aiJustification: 'The student demonstrates a comprehensive understanding of the topic through well-structured arguments and relevant examples...',
+      suggestedFeedback: 'Consider incorporating more specific textual evidence to support your analysis...',
+      teacherJustification: '',
+      feedback: '',
+      rubricReference: 'Original Criteria > Discerning approach',
+    },
+    'Text structures': {
+      grade: 2,
+      status: 'Developing',
+      aiJustification: 'The response shows developing competency in analyzing text structures, with some effective use of literary devices...',
+      suggestedFeedback: 'Try to expand on how the author\'s use of language contributes to the overall meaning...',
+      teacherJustification: '',
+      feedback: '',
+      rubricReference: 'Secondary Criteria > Effective evaluation',
+    }
+  });
+  const [expandedSections, setExpandedSections] = useState({});
+  const [activeTextArea, setActiveTextArea] = useState(null);
+  const { transcript, resetTranscript, listening } = useSpeechRecognition();
+
+  const grades = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-','D', 'F'];
+
+  const adjustGrade = (direction) => {
+    const currentIndex = grades.indexOf(currentMark);
+    if (direction === 'increase' && currentIndex > 0) {
+      setCurrentMark(grades[currentIndex - 1]);
+      setShowSpeechBox(true);
+      resetTranscript();
+    } else if (direction === 'decrease' && currentIndex < grades.length - 1) {
+      setCurrentMark(grades[currentIndex + 1]);
+      setShowSpeechBox(true);
+      resetTranscript();
+    }
+  };
+
+  const highlights = [
+    {
+      text: "Shakespeare's masterful use of dramatic irony",
+      color: "bg-green-200",
+      criterion: "Discerning approach",
+      feedback: "Shows deep understanding of dramatic irony as a literary device and its impact on audience engagement."
+    },
+    {
+      text: "heightens the tragic impact",
+      color: "bg-blue-200",
+      criterion: "Evaluates structures",
+      feedback: "Effectively analyzes how dramatic techniques contribute to the overall tragic effect of the play."
+    },
+    {
+      text: "psychological complexity of the characters",
+      color: "bg-yellow-200",
+      criterion: "Different authors",
+      feedback: "Demonstrates understanding of Shakespeare's unique approach to character development compared to other playwrights."
+    }
+  ];
+
+  const handleHighlightClick = (e) => {
+    const criterion = e.target.getAttribute('data-criterion');
+    if (criterion) {
+      setSelectedCriterion(criterion);
+      const highlight = highlights.find(h => h.criterion === criterion);
+      setRubricFeedback(highlight?.feedback);
+      setShowJustifications(true);
+    }
+  };
+
+  const getHighlightedContent = (content) => {
+    let highlightedContent = content;
+    highlights.forEach(({ text, color, criterion }) => {
+      const regex = new RegExp(text, 'gi');
+      highlightedContent = highlightedContent.replace(
+        regex,
+        `<span class="${color} cursor-pointer px-1 rounded hover:ring-2 hover:ring-blue-500" data-criterion="${criterion}">${text}</span>`
+      );
+    });
+    return highlightedContent;
+  };
+  const handleSpeechInput = () => {
+    setJustification(transcript);
+  };
+
+  const getLetterGrade = (gpa) => {
+    if (gpa >= 4.0) return 'A';
+    if (gpa >= 3.7) return 'A-';
+    if (gpa >= 3.3) return 'B+';
+    if (gpa >= 3.0) return 'B';
+    if (gpa >= 2.7) return 'B-';
+    if (gpa >= 2.5) return 'C+';
+    if (gpa >= 2.0) return 'C';
+    if (gpa >= 1.5) return 'C-';
+    if (gpa >= 1.0) return 'D';
+    return 'F';
+  };
+
+  const handleGradeChange = (newGpa) => {
+    setGpa(newGpa);
+    setCurrentMark(getLetterGrade(newGpa));
+  };
+
+  const adjustCriterionGrade = (criterion, direction) => {
+    setCriteriaGrades(prev => {
+      const newGrades = { ...prev };
+      const currentGrade = newGrades[criterion].grade;
+      const newGrade = direction === 'increase' 
+        ? Math.min(currentGrade + 1, 4) 
+        : Math.max(currentGrade - 1, 0);
+      
+      newGrades[criterion] = {
+        ...newGrades[criterion],
+        grade: newGrade,
+        status: getGradeStatus(newGrade)
+      };
+      
+      // Calculate overall GPA
+      const allGrades = Object.values(newGrades).map(item => item.grade);
+      const avgGrade = allGrades.reduce((sum, grade) => sum + grade, 0) / allGrades.length;
+      setGpa(avgGrade);
+      setCurrentMark(getLetterGrade(avgGrade));
+      
+      return newGrades;
+    });
+  };
+
+  const getGradeStatus = (grade) => {
+    if (grade >= 3.5) return 'Excellent';
+    if (grade >= 2.5) return 'Satisfactory';
+    if (grade >= 1.5) return 'Developing';
+    if (grade >= 0.5) return 'Limited';
+    return 'Insufficient';
+  };
+
+  const toggleSection = (criterion, section) => {
+    setExpandedSections(prev => {
+      const key = `${criterion}-${section}`;
+      return {
+        ...prev,
+        [key]: !prev[key]
+      };
+    });
+  };
+
+  const updateTeacherJustification = (criterion, justification) => {
+    setCriteriaGrades(prev => ({
+      ...prev,
+      [criterion]: {
+        ...prev[criterion],
+        teacherJustification: justification
+      }
+    }));
+  };
+
+  const updateFeedback = (criterion, feedback) => {
+    setCriteriaGrades(prev => ({
+      ...prev,
+      [criterion]: {
+        ...prev[criterion],
+        feedback: feedback
+      }
+    }));
+  };
+
+  const startListening = (criterion, field) => {
+    setActiveTextArea({ criterion, field });
+    resetTranscript();
+    SpeechRecognition.startListening({ continuous: true });
+  };
+
+  const stopListening = () => {
+    SpeechRecognition.stopListening();
+    if (activeTextArea) {
+      const { criterion, field } = activeTextArea;
+      if (field === 'teacherJustification') {
+        updateTeacherJustification(criterion, transcript);
+      } else if (field === 'feedback') {
+        updateFeedback(criterion, transcript);
+      }
+    }
+    setActiveTextArea(null);
+  };
 
   useEffect(() => {
-    // TODO: Fetch submission data from backend
     const fetchSubmission = async () => {
       try {
-        // Mock data for demo submission
-        if (id === '2' && submissionId === 'demo1') {
-          const mockSubmission = {
-            id: submissionId,
-            studentName: 'Demo Student',
-            submittedAt: '2024-03-27T15:30',
-            content: `Artificial Intelligence has emerged as a transformative force in education, revolutionizing how we teach and learn. This essay explores the significant impacts of AI on modern education, examining both its benefits and potential challenges.
+        const mockSubmission = {
+          id: submissionId,
+          title: "Analysis of Dramatic Techniques in Shakespeare's Tragedies",
+          content: `Shakespeare's masterful use of dramatic irony in his tragedies serves as a powerful tool for engaging audiences and heightens the tragic impact of his plays. This analysis explores how the playwright employs various dramatic techniques to create complex narratives that resonate with audiences across centuries.
 
-One of the most prominent positive impacts of AI in education is personalized learning. AI algorithms can analyze student performance data to create customized learning paths, adapting to each student's pace and learning style. For example, adaptive learning platforms use AI to identify knowledge gaps and automatically adjust content difficulty, ensuring students receive targeted instruction where they need it most.
+In "Othello," Shakespeare crafts a masterpiece of psychological manipulation, where the audience's awareness of Iago's deception intensifies the emotional impact of each scene. The psychological complexity of the characters is revealed through carefully constructed dialogues and soliloquies, allowing viewers to witness the tragic consequences of misplaced trust and jealousy.
 
-Furthermore, AI has enhanced administrative efficiency in educational institutions. Automated grading systems can handle objective assessments, freeing teachers to focus on more meaningful interactions with students. AI-powered chatbots provide 24/7 support for common student queries, improving accessibility to information and reducing administrative burden.
+The play's structure demonstrates Shakespeare's sophisticated understanding of dramatic tension. By gradually building suspense through a series of carefully orchestrated revelations, he creates a compelling narrative that holds the audience's attention while exploring themes of love, betrayal, and racial prejudice in Venetian society.
 
-However, the integration of AI in education also raises concerns. There's a risk of over-reliance on technology, potentially diminishing human interaction in the learning process. The "digital divide" may widen as schools with limited resources struggle to implement AI solutions, creating educational inequalities.
+Furthermore, Shakespeare's use of parallel plotlines and contrasting characters adds depth to the narrative. The relationship between Othello and Desdemona is juxtaposed with that of Iago and Emilia, highlighting themes of trust, loyalty, and deception from different perspectives. This multilayered approach enriches the audience's understanding of the play's central themes.
 
-Additionally, data privacy and security concerns emerge as AI systems collect and analyze student data. Educational institutions must carefully balance the benefits of personalized learning with protecting student privacy and ensuring responsible data management.
-
-Looking ahead, AI's role in education will likely expand, but success depends on thoughtful implementation that preserves the irreplaceable human elements of teaching while leveraging technology's advantages. The key lies in using AI as a tool to enhance, rather than replace, traditional educational approaches.`,
-            files: [],
-            currentGrade: null,
-            status: 'pending'
-          };
-          setSubmission(mockSubmission);
-        } else {
-          const mockSubmission = {
-            id: submissionId,
-            studentName: 'John Doe',
-            submittedAt: '2024-03-25T14:30',
-            content: 'This is the student\'s submission content...',
-            files: [
-              { name: 'assignment.pdf', url: '#' }
-            ],
-            currentGrade: null,
-            status: 'pending'
-          };
-          setSubmission(mockSubmission);
-        }
+The tragic conclusion of the play demonstrates Shakespeare's ability to bring multiple narrative threads together in a powerful climax. The final scene, where Othello realizes the truth of Iago's manipulation too late, represents the culmination of the dramatic irony that has built throughout the play, creating a profound impact on the audience.`,
+          status: 'in-progress'
+        };
+        setSubmission(mockSubmission);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching submission:', error);
@@ -58,196 +242,290 @@ Looking ahead, AI's role in education will likely expand, but success depends on
     };
 
     fetchSubmission();
-  }, [submissionId, id]);
-
-  const requestAiGrading = async () => {
-    try {
-      setIsAiGrading(true);
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Mock AI grading response for demo
-      if (id === '2' && submissionId === 'demo1') {
-        const mockAiSuggestion = {
-          suggestedGrade: 92,
-          feedback: `Overall Evaluation: Excellent essay that demonstrates a comprehensive understanding of AI's impact on education.
-
-Strengths:
-1. Clear structure and logical flow of ideas
-2. Strong examples of AI applications in education
-3. Balanced discussion of benefits and challenges
-4. Well-supported arguments with specific examples
-
-Areas for Improvement:
-1. Could include more specific statistics or research findings
-2. Consider expanding on potential solutions to the digital divide
-3. Brief mention of implementation strategies could be more detailed
-
-Rubric Breakdown:
-- Understanding of AI Concepts: 23/25
-- Critical Analysis: 24/25
-- Clear Examples: 23/25
-- Writing Quality: 22/25
-
-Total Score: 92/100`,
-          rubricBreakdown: {
-            'Understanding of AI Concepts': 23,
-            'Critical Analysis': 24,
-            'Clear Examples': 23,
-            'Writing Quality': 22
-          }
-        };
-        setAiSuggestion(mockAiSuggestion);
-        setGrade(mockAiSuggestion.suggestedGrade.toString());
-        setFeedback(mockAiSuggestion.feedback);
-      } else {
-        const mockAiSuggestion = {
-          suggestedGrade: 85,
-          feedback: 'Good work overall. Consider improving...',
-          rubricBreakdown: {
-            understanding: 9,
-            implementation: 8,
-            presentation: 8
-          }
-        };
-        setAiSuggestion(mockAiSuggestion);
-      }
-    } catch (error) {
-      console.error('Error getting AI suggestion:', error);
-    } finally {
-      setIsAiGrading(false);
-    }
-  };
-
-  const handleSubmitGrade = async (e) => {
-    e.preventDefault();
-    // TODO: Submit grade to backend
-    console.log('Submitting grade:', { grade, feedback });
-  };
+  }, [submissionId]);
 
   if (loading) {
     return <div className="p-6">Loading...</div>;
   }
+    if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
+    return <span>Speech recognition is not supported in your browser.</span>;
+  }
+  
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold mb-2">Grade Submission</h1>
-          <p className="text-gray-600">Student: {submission.studentName}</p>
-          <p className="text-gray-600">Submitted: {submission.submittedAt}</p>
-        </div>
-
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-4">Submission Content</h2>
-          <div className="bg-gray-50 p-4 rounded">
-            <p className="whitespace-pre-wrap">{submission.content}</p>
-          </div>
-
-          {submission.files.length > 0 && (
-            <div className="mt-4">
-              <h3 className="font-semibold mb-2">Attached Files:</h3>
-              <ul className="list-disc pl-5">
-                {submission.files.map((file, index) => (
-                  <li key={index}>
-                    <a href={file.url} className="text-blue-500 hover:underline">
-                      {file.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+    <div className="min-h-screen bg-gray-50">
+      {/* Top Navigation */}
+      <div className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setActiveTab('student-response')}
+                className={`px-4 py-2 font-medium ${
+                  activeTab === 'student-response' 
+                    ? 'text-blue-600 border-b-2 border-blue-600' 
+                    : 'text-gray-500'
+                }`}
+              >
+                Student Response
+              </button>
+              <button
+                onClick={() => setActiveTab('rubric')}
+                className={`px-4 py-2 font-medium ${
+                  activeTab === 'rubric' 
+                    ? 'text-blue-600 border-b-2 border-blue-600' 
+                    : 'text-gray-500'
+                }`}
+              >
+                Rubric
+              </button>
             </div>
-          )}
-        </div>
-
-        <div className="mb-6">
-          <button
-            onClick={requestAiGrading}
-            disabled={isAiGrading}
-            className={`${
-              isAiGrading 
-                ? 'bg-purple-300 cursor-not-allowed' 
-                : 'bg-purple-500 hover:bg-purple-600'
-            } text-white px-4 py-2 rounded flex items-center gap-2`}
-          >
-            {isAiGrading ? (
-              <>
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Processing...
-              </>
-            ) : (
-              "Athena's Graded Suggestion"
-            )}
-          </button>
-
-          {aiSuggestion && (
-            <div className="mt-4 bg-purple-50 p-4 rounded">
-              <h3 className="font-semibold mb-2">Athena's Suggestion</h3>
-              <p className="font-medium">Suggested Grade: {aiSuggestion.suggestedGrade}/100</p>
-              
-              {aiSuggestion.rubricBreakdown && (
-                <div className="mt-4">
-                  <h4 className="font-medium mb-2">Rubric Breakdown:</h4>
-                  <div className="space-y-2">
-                    {Object.entries(aiSuggestion.rubricBreakdown).map(([criterion, score]) => (
-                      <div key={criterion} className="flex items-center">
-                        <span className="w-48 text-sm">{criterion}:</span>
-                        <div className="flex-1 h-2 bg-gray-200 rounded">
-                          <div
-                            className="h-full bg-purple-500 rounded"
-                            style={{ width: `${(score / 25) * 100}%` }}
-                          ></div>
-                        </div>
-                        <span className="ml-2 text-sm">{score}/25</span>
-                      </div>
-                    ))}
-                  </div>
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col items-end">
+                <span className="text-sm text-gray-500">Current Grade</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-bold text-indigo-600">{currentMark}</span>
+                  <span className="text-sm text-gray-500">({gpa.toFixed(2)} GPA)</span>
                 </div>
-              )}
-              
-              <div className="mt-4">
-                <h4 className="font-medium mb-2">Athena's Feedback:</h4>
-                <p className="whitespace-pre-wrap text-gray-700">{aiSuggestion.feedback}</p>
+              </div>
+              <button className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2">
+                <FaCheckCircle />
+                Mark Assessment
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {activeTab === 'student-response' ? (
+          // Student Response View
+          <div className="flex gap-4">
+            {/* Left Panel - Student Response */}
+            <div className="mb-6 flex justify-normal space-x-2">
+              <div className="bg-white rounded-lg">
+                <div className="h-[calc(100vh-8rem)] overflow-y-auto p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center space-x-2">
+                      <button className="p-2 rounded hover:bg-gray-100">
+                        <FaChevronLeft />
+                      </button>
+                      <button className="p-2 rounded hover:bg-gray-100">
+                        <FaChevronRight />
+                      </button>
+                    </div>
+                    <button className="p-2 rounded hover:bg-gray-100">
+                      <FaExpandAlt />
+                    </button>
+                  </div>
+                  <div 
+                    className="prose max-w-none"
+                    dangerouslySetInnerHTML={{ 
+                      __html: getHighlightedContent(submission.content)
+                    }}
+                    onClick={handleHighlightClick}
+                  />
+                </div>
               </div>
             </div>
-          )}
-        </div>
 
-        <form onSubmit={handleSubmitGrade} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Final Grade</label>
-            <input
-              type="number"
-              value={grade}
-              onChange={(e) => setGrade(e.target.value)}
-              className="w-full p-2 border rounded"
-              min="0"
-              max="100"
-              required
-            />
+            {/* Right Panel - Grading Interface */}
+            <div className="container w-[48rem]">
+              <div className="bg-white rounded-lg p-8 h-[calc(100vh-8rem)] overflow-y-auto">
+                {Object.entries(criteriaGrades).map(([criterion, data]) => (
+                  <div key={criterion} className="bg-gray-50 rounded-lg p-6 mb-6">
+                    <div className="mb-4">
+                      <h3 className="text-base font-medium text-gray-800">{criterion}</h3>
+                      <p className="text-sm text-gray-600 mb-2">{data.status}</p>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      {/* Justification Section */}
+                      <button
+                        onClick={() => toggleSection(criterion, 'justification')}
+                        className="w-full flex items-center justify-between p-2 bg-white rounded-lg hover:bg-gray-100"
+                      >
+                        <span className="text-sm font-medium">Justification</span>
+                        <FaChevronDown 
+                          size={12} 
+                          className={`transform transition-transform ${
+                            expandedSections[`${criterion}-justification`] ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+                      {expandedSections[`${criterion}-justification`] && (
+                        <div className="bg-white p-4 rounded-lg space-y-3">
+                          <div className="space-y-2">
+                            <p className="text-xs font-medium text-gray-700">AI Analysis:</p>
+                            <div className="bg-blue-50 p-3 rounded-lg">
+                              <p className="text-sm text-gray-800">{data.aiJustification || "The student demonstrates a strong understanding of the topic through..."}</p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <p className="text-xs font-medium text-gray-700">Rubric Alignment:</p>
+                            <div className="bg-indigo-50 p-3 rounded-lg">
+                              <p className="text-sm font-medium text-indigo-800">{data.rubricReference}</p>
+                              <p className="text-sm text-gray-700 mt-1">
+                                This response aligns with the following criteria:
+                                <ul className="list-disc ml-4 mt-1">
+                                  <li>Clear demonstration of concept understanding</li>
+                                  <li>Effective use of supporting evidence</li>
+                                  <li>Logical organization of ideas</li>
+                                </ul>
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <p className="text-xs font-medium text-gray-700">Teacher Notes:</p>
+                            <div className="relative">
+                              <textarea
+                                value={activeTextArea?.criterion === criterion && 
+                                       activeTextArea?.field === 'teacherJustification' 
+                                       ? transcript 
+                                       : data.teacherJustification}
+                                onChange={(e) => updateTeacherJustification(criterion, e.target.value)}
+                                className="w-full text-sm border border-gray-300 rounded-md p-2 min-h-[80px] pr-10"
+                                placeholder="Add your notes here..."
+                              />
+                              <button
+                                onClick={() => {
+                                  if (activeTextArea?.criterion === criterion && 
+                                      activeTextArea?.field === 'teacherJustification') {
+                                    stopListening();
+                                  } else {
+                                    startListening(criterion, 'teacherJustification');
+                                  }
+                                }}
+                                className={`absolute right-2 top-2 p-2 rounded-full 
+                                  ${listening && activeTextArea?.criterion === criterion && 
+                                    activeTextArea?.field === 'teacherJustification'
+                                    ? 'bg-red-100 text-red-600'
+                                    : 'bg-gray-100 text-gray-600'} 
+                                  hover:bg-gray-200`}
+                              >
+                                <FaMicrophone size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Feedback Section */}
+                      <button
+                        onClick={() => toggleSection(criterion, 'feedback')}
+                        className="w-full flex items-center justify-between p-2 bg-white rounded-lg hover:bg-gray-100"
+                      >
+                        <span className="text-sm font-medium">Feedback</span>
+                        <FaChevronDown 
+                          size={12} 
+                          className={`transform transition-transform ${
+                            expandedSections[`${criterion}-feedback`] ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+                      {expandedSections[`${criterion}-feedback`] && (
+                        <div className="bg-white p-4 rounded-lg space-y-3">
+                          <div className="space-y-2">
+                            <p className="text-xs font-medium text-gray-700">Suggested Feedback:</p>
+                            <div className="bg-green-50 p-3 rounded-lg">
+                              <p className="text-sm text-gray-800">
+                                {data.suggestedFeedback || "Consider providing specific examples to strengthen your argument..."}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <p className="text-xs font-medium text-gray-700">Custom Feedback:</p>
+                            <div className="relative">
+                              <textarea
+                                value={activeTextArea?.criterion === criterion && 
+                                       activeTextArea?.field === 'feedback' 
+                                       ? transcript 
+                                       : data.feedback}
+                                onChange={(e) => updateFeedback(criterion, e.target.value)}
+                                className="w-full text-sm border border-gray-300 rounded-md p-2 min-h-[100px] pr-10"
+                                placeholder="Enter your feedback for the student..."
+                              />
+                              <button
+                                onClick={() => {
+                                  if (activeTextArea?.criterion === criterion && 
+                                      activeTextArea?.field === 'feedback') {
+                                    stopListening();
+                                  } else {
+                                    startListening(criterion, 'feedback');
+                                  }
+                                }}
+                                className={`absolute right-2 top-2 p-2 rounded-full 
+                                  ${listening && activeTextArea?.criterion === criterion && 
+                                    activeTextArea?.field === 'feedback'
+                                    ? 'bg-red-100 text-red-600'
+                                    : 'bg-gray-100 text-gray-600'} 
+                                  hover:bg-gray-200`}
+                              >
+                                <FaMicrophone size={14} />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 mt-2">
+                            <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                              <FaLightbulb size={12} />
+                              Suggest Improvement
+                            </button>
+                            <button className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                              <FaComments size={12} />
+                              Add Comment
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Grade Controls */}
+                    <div className="mt-4 flex items-center justify-between p-2 bg-white rounded-lg">
+                      <span className="text-sm font-medium mr-2">Grade</span>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => {
+                            adjustCriterionGrade(criterion, 'decrease');
+                            setSelectedCriterion(criterion);
+                          }}
+                          className="p-1 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                          disabled={data.grade === 0}
+                        >
+                          <FaMinus size={12} />
+                        </button>
+                        <div className="px-10 py-1 bg-orange-100 text-orange-800 rounded-lg">
+                          {data.grade}
+                        </div>
+                        <button
+                          onClick={() => {
+                            adjustCriterionGrade(criterion, 'increase');
+                            setSelectedCriterion(criterion);
+                          }}
+                          className="p-1 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+                          disabled={data.grade === 4}
+                        >
+                          <FaPlus size={12} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Teacher Feedback</label>
-            <textarea
-              value={feedback}
-              onChange={(e) => setFeedback(e.target.value)}
-              className="w-full p-2 border rounded"
-              rows="4"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-          >
-            Submit Grade
-          </button>
-        </form>
+        ) : (
+          // Rubric View
+          <TeacherRubric 
+            selectedCriterion={selectedCriterion}
+            onGradeChange={handleGradeChange}
+            criteriaGrades={criteriaGrades}
+          />
+        )}
       </div>
     </div>
   );

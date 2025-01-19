@@ -6,6 +6,7 @@ import StudentAssignment from '../studentComponents/StudentAssignment';
 import DashboardNavbar from '../components/DashboardNavbar';
 import Sidebar from '../studentComponents/studentHomeComponents/Sidebar';
 
+
 const StudentDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -20,6 +21,7 @@ const StudentDashboard = () => {
             <Route path="home" element={<StudentHome />} />
             <Route path="classes" element={<StudentClasses />} />
             <Route path="assignments/*" element={<StudentAssignment />} />
+
             <Route path="/" element={<Navigate to="home" replace />} />
           </Routes>
         </div>
