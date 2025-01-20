@@ -1,8 +1,6 @@
 """
 File to use for uploading files and info to the database
 """
-import Files
-import os
 import supabase
 import pymongo
 
@@ -22,14 +20,12 @@ collectionR = db["Rubrics"]
 
 def upload_assignment(assignment):
     # upload assignment info to supabase
-    supabase_client.table("Assignments").insert({"id": assignment.get_id(), "rubric_id": assignment.get_rubric_id(), "name": assignment.get_name(), "teachers": assignment.get_teachers()}).execute()
+    supabase_client.table("Assignments").insert({"id": assignment.get_id(), "rubric id": None, "name": assignment.get_name(), "teachers": None}).execute()
     # upload assignment file to mongoDB
     collectionA.insert_one({"id": assignment.get_id(), "file": assignment.get_file()})
 
 def upload_rubric(rubric):
     # upload rubric info to supabase
-    supabase_client.table("Rubrics").insert({"id": rubric.get_id(), "name": rubric.get_name(), "teachers": rubric.get_teachers()}).execute()
+    supabase_client.table("Rubrics").insert({"id": rubric.get_id(), "assignment id": None, "name": rubric.get_name(), "teachers": None}).execute()
     # upload rubric file to mongoDB
     collectionR.insert_one({"id": rubric.get_id(), "file": rubric.get_file()})
-
-
