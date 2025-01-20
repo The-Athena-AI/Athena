@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import Athena.backend_api.src.main.controller.GradingFileDAO as DAO
+import GradingFileDAO as DAO
 
 app = Flask(__name__)
 
