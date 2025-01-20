@@ -1,7 +1,11 @@
-"""
-File which will be used by the front-end
+from flask import Flask, request, jsonify
+import persistence.GradingFileDAO as DAO
 
-Will contain the POST, GET, DELETE, etc methods
+app = Flask(__name__)
 
-I'll get around to this once I figure out how RestAPI works in python
-"""
+@app.route('/grade', methods=['POST'])
+def grade(assignment_id, rubric_id):
+    assignment = DAO.get_assignment(assignment_id)
+    rubric = DAO.get_rubric(rubric_id)
+    grade = DAO.grade_assignment(assignment, rubric)
+    return jsonify(grade)
