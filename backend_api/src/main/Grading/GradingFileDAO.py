@@ -1,4 +1,4 @@
-import model.Files as Files
+import Files as Files
 
 import os
 import openai
