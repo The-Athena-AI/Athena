@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import Files
+import Athena.backend_api.src.main.Grading.Files as Files
 import CreateFileDAO as DAO
 
 def test_upload_assignment():

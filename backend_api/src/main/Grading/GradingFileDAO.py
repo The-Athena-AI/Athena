@@ -1,4 +1,4 @@
-import Athena.backend_api.src.main.Files as Files
+import Files as Files
 
 import os
 import openai

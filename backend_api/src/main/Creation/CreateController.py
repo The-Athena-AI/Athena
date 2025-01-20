@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import CreateFileDAO as DAO
-import Athena.backend_api.src.main.Files as Files
+import Athena.backend_api.src.main.Grading.Files as Files
 
 app = Flask(__name__)
 
