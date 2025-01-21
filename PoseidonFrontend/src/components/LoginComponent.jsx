@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getFunctions, httpsCallable } from "firebase/functions";
-import { useUserAuth } from "../context/UserAuthContext";
+
 
 const LoginComponent = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUserName] = useState("");
   const [error, setError] = useState("");
-  const { logIn, googleSignIn } = useUserAuth();
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,7 +40,6 @@ const LoginComponent = ({ onClose }) => {
 
   const handleGoogleSignIn = async () => {
     try {
-      const user = await googleSignIn(); // Sign in with Google
       const functions = getFunctions();
       const googleLogin = httpsCallable(functions, "googleLogin");
   
