@@ -1,13 +1,21 @@
 {
   "files": {
-    "main.css": "/static/css/main.28ba8256.css",
-    "main.js": "/static/js/main.92a01a52.js",
+    "main.css": "/static/css/main.88eeda6e.css",
+    "main.js": "/static/js/main.18f50122.js",
+    "static/media/PerfectAthenaPhotoUpdated2.png": "/static/media/PerfectAthenaPhotoUpdated2.403ae59e5e50d49d7996.png",
+    "static/media/ResponseAndGrading.png": "/static/media/ResponseAndGrading.927e3319cf0e573a432a.png",
+    "static/media/TeacherDashboard.png": "/static/media/TeacherDashboard.b109a6e47661f08f7897.png",
+    "static/media/BookImage.jpg": "/static/media/BookImage.3bcf79d795a0a9976c9c.jpg",
+    "static/media/Rubric.png": "/static/media/Rubric.d0e6f31cdbd9bcd993a0.png",
+    "static/media/AthenaChat.png": "/static/media/AthenaChat.2e5216218fea931585a0.png",
+    "static/media/Feedback.png": "/static/media/Feedback.67e62f9048f3460e4bc8.png",
+    "static/media/athena-high-resolution-logo-transparent.png": "/static/media/athena-high-resolution-logo-transparent.f70cd753ecdf7f0e6388.png",
     "index.html": "/index.html",
-    "main.28ba8256.css.map": "/static/css/main.28ba8256.css.map",
-    "main.92a01a52.js.map": "/static/js/main.92a01a52.js.map"
+    "main.88eeda6e.css.map": "/static/css/main.88eeda6e.css.map",
+    "main.18f50122.js.map": "/static/js/main.18f50122.js.map"
   },
   "entrypoints": [
-    "static/css/main.28ba8256.css",
-    "static/js/main.92a01a52.js"
+    "static/css/main.88eeda6e.css",
+    "static/js/main.18f50122.js"
   ]
 }
