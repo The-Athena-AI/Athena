@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getFunctions, httpsCallable } from "firebase/functions";
-import { useUserAuth } from "../context/UserAuthContext";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
 
 const SignupComponent = ({ onClose }) => {
   const [email, setEmail] = useState("");
@@ -13,7 +10,6 @@ const SignupComponent = ({ onClose }) => {
   const [name, setFirstLastname] = useState("");
   const [role, setRole] = useState(""); // New state for role selection
   const navigate = useNavigate();
-  const { setUser } = useUserAuth();
 
   const handleSubmit = async (e) => {
     console.log("Form submitted!");
