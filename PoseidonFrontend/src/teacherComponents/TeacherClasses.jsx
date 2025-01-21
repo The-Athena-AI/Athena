@@ -1,129 +1,70 @@
 import React, { useState } from 'react';
-import { useClass } from '../contexts/ClassContext';
-import { FaChalkboard, FaCopy, FaPlus } from 'react-icons/fa';
+import { FaChalkboard } from 'react-icons/fa';
 import ManageClass from './ManageClass';
+import bookImage from '../images/BookImage.jpg';
 
 const TeacherClasses = () => {
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
-  const [className, setClassName] = useState('');
-  const { userClasses, createClass, loading } = useClass();
-
-  const handleCreateClass = async (e) => {
-    e.preventDefault();
-    try {
-      const classCode = await createClass(className);
-      alert(`Class created successfully! Class code: ${classCode}`);
-      setClassName('');
-      setShowCreateModal(false);
-    } catch (error) {
-      alert('Error creating class: ' + error.message);
+  
+  const hardcodedClass = {
+    id: '1',
+    name: 'Writing',
+    description: 'A comprehensive writing course focusing on developing strong writing skills, critical thinking, and effective communication through various writing styles and techniques.',
+    students: {
+      '1': { name: 'John Smith', joinedAt: new Date().toISOString() },
+      '2': { name: 'Sarah Johnson', joinedAt: new Date().toISOString() },
+      '3': { name: 'Mike Williams', joinedAt: new Date().toISOString() }
     }
   };
 
-  const copyClassCode = (code) => {
-    navigator.clipboard.writeText(code);
-    alert('Class code copied to clipboard!');
-  };
-
   return (
-    <div className="p-6">
+    <div className="p-6 bg-black min-h-screen">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">My Classes</h1>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <FaPlus />
-          Create New Class
-        </button>
+        <h1 className="text-2xl font-bold text-yellow-400">My Classes</h1>
       </div>
 
-      {loading ? (
-        <div className="text-center py-8">Loading...</div>
-      ) : userClasses.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {userClasses.map((classItem) => (
-            <div
-              key={classItem.id}
-              className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold mb-2">{classItem.name}</h2>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Students: {Object.keys(classItem.students || {}).length}
-                  </p>
-                </div>
-                <button
-                  onClick={() => copyClassCode(classItem.code)}
-                  className="text-gray-500 hover:text-blue-600 p-2"
-                  title="Copy class code"
-                >
-                  <FaCopy />
-                </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="bg-gray-900 rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-800 overflow-hidden">
+          {/* Image Container */}
+          <div className="relative h-48 overflow-hidden">
+            <img 
+              src={bookImage} 
+              alt="Writing Class"
+              className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+          </div>
+          
+          {/* Content Container */}
+          <div className="p-6">
+            <div className="flex items-start justify-between">
+              <div>
+                <h2 className="text-xl font-semibold mb-2 text-yellow-400">{hardcodedClass.name}</h2>
+                <p className="text-sm text-yellow-400/70 mb-4">
+                  Students: {Object.keys(hardcodedClass.students).length}
+                </p>
               </div>
-              
-              <div className="bg-gray-50 p-3 rounded-lg mb-4">
-                <p className="text-sm text-gray-600">Class Code:</p>
-                <p className="text-lg font-mono font-semibold">{classItem.code}</p>
-              </div>
-
-              <button 
-                className="w-full mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
-                onClick={() => setSelectedClass(classItem)}
-              >
-                Manage Class →
-              </button>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12 bg-white rounded-xl">
-          <FaChalkboard className="mx-auto text-4xl text-gray-400 mb-4" />
-          <h3 className="text-xl font-medium text-gray-600 mb-2">No Classes Yet</h3>
-          <p className="text-gray-500">Create your first class to get started</p>
-        </div>
-      )}
+            
+            <div className="bg-black/50 p-3 rounded-lg mb-4">
+              <p className="text-sm text-yellow-400/70">Description:</p>
+              <p className="text-sm text-yellow-400">{hardcodedClass.description}</p>
+            </div>
 
-      {/* Create Class Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Create New Class</h2>
-            <form onSubmit={handleCreateClass}>
-              <input
-                type="text"
-                value={className}
-                onChange={(e) => setClassName(e.target.value)}
-                placeholder="Enter class name"
-                className="w-full p-2 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-              <div className="flex justify-end gap-4">
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Create Class
-                </button>
-              </div>
-            </form>
+            <button 
+              className="w-full mt-2 text-yellow-400 hover:text-yellow-500 text-sm font-medium bg-black/50 py-2 rounded-lg transition-colors"
+              onClick={() => setSelectedClass(hardcodedClass)}
+            >
+              Manage Class →
+            </button>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Manage Class Modal */}
       {selectedClass && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="bg-gray-900 rounded-xl w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto border border-gray-800">
             <ManageClass 
               classData={selectedClass} 
               onClose={() => setSelectedClass(null)}

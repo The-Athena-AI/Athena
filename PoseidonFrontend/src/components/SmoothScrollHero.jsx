@@ -9,6 +9,12 @@ import { FiArrowRight, FiBook, FiUser } from "react-icons/fi";
 import { useRef } from "react";
 import Navbar from "./Navbar";
 import Athena from '../images/PerfectAthenaPhotoUpdated2.png'
+import AthenaChat from '../HomePageImages/AthenaChat.png';
+import FeedbackImage from '../HomePageImages/Feedback.png';
+import ResponseAndGrading from '../HomePageImages/ResponseAndGrading.png';
+import Rubric from '../HomePageImages/Rubric.png';
+import TeacherDashboard from '../HomePageImages/TeacherDashboard.png';
+
 
 export const SmoothScrollHero = () => {
   return (

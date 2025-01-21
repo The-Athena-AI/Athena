@@ -80,119 +80,122 @@ const AssignmentEdit = () => {
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Edit Assignment</h1>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Title</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Class</label>
-          <select
-            name="classId"
-            value={formData.classId}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          >
-            <option value="">Select a class</option>
-            {classes.map(cls => (
-              <option key={cls.id} value={cls.id}>{cls.name}</option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Description</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            rows="4"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Due Date</label>
-          <input
-            type="datetime-local"
-            name="dueDate"
-            value={formData.dueDate}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Points</label>
-          <input
-            type="number"
-            name="points"
-            value={formData.points}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            min="0"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              name="aiGradingEnabled"
-              checked={formData.aiGradingEnabled}
-              onChange={handleChange}
-            />
-            <span className="text-sm font-medium">Enable Athena Grading</span>
-          </label>
-        </div>
-
-        {formData.aiGradingEnabled && (
+    <div className="min-h-screen bg-black p-6">
+      <div className="max-w-2xl mx-auto bg-gray-900 rounded-lg border border-gray-800 p-8">
+        <h1 className="text-2xl font-bold mb-6 text-yellow-400">Edit Assignment</h1>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Athena Grading Instructions
-            </label>
-            <textarea
-              name="aiGradingInstructions"
-              value={formData.aiGradingInstructions}
+            <label className="block text-sm font-medium mb-2 text-yellow-400">Title</label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
-              rows="3"
-              placeholder="Provide instructions for AI grading..."
+              className="w-full p-3 bg-black border border-gray-800 rounded-lg text-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+              required
             />
           </div>
-        )}
 
-        <div className="flex space-x-4">
-          <button
-            type="submit"
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-          >
-            Save Changes
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('..')}
-            className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+          <div>
+            <label className="block text-sm font-medium mb-2 text-yellow-400">Class</label>
+            <select
+              name="classId"
+              value={formData.classId}
+              onChange={handleChange}
+              className="w-full p-3 bg-black border border-gray-800 rounded-lg text-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+              required
+            >
+              <option value="" className="bg-black">Select a class</option>
+              {classes.map(cls => (
+                <option key={cls.id} value={cls.id} className="bg-black">{cls.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2 text-yellow-400">Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full p-3 bg-black border border-gray-800 rounded-lg text-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+              rows="4"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2 text-yellow-400">Due Date</label>
+            <input
+              type="datetime-local"
+              name="dueDate"
+              value={formData.dueDate}
+              onChange={handleChange}
+              className="w-full p-3 bg-black border border-gray-800 rounded-lg text-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2 text-yellow-400">Points</label>
+            <input
+              type="number"
+              name="points"
+              value={formData.points}
+              onChange={handleChange}
+              className="w-full p-3 bg-black border border-gray-800 rounded-lg text-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+              min="0"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                name="aiGradingEnabled"
+                checked={formData.aiGradingEnabled}
+                onChange={handleChange}
+                className="w-4 h-4 text-yellow-400 border-gray-800 rounded focus:ring-yellow-400 focus:ring-offset-black"
+              />
+              <span className="text-sm font-medium text-yellow-400">Enable Athena Grading</span>
+            </label>
+          </div>
+
+          {formData.aiGradingEnabled && (
+            <div>
+              <label className="block text-sm font-medium mb-2 text-yellow-400">
+                Athena Grading Instructions
+              </label>
+              <textarea
+                name="aiGradingInstructions"
+                value={formData.aiGradingInstructions}
+                onChange={handleChange}
+                className="w-full p-3 bg-black border border-gray-800 rounded-lg text-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                rows="3"
+                placeholder="Provide instructions for AI grading..."
+              />
+            </div>
+          )}
+
+          <div className="flex space-x-4">
+            <button
+              type="submit"
+              className="bg-yellow-400 text-black px-6 py-2 rounded-lg hover:bg-yellow-500 transition-colors"
+            >
+              Save Changes
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('..')}
+              className="bg-gray-800 text-yellow-400 px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

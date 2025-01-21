@@ -11,15 +11,18 @@ import "./index.css";
 import StudentDashboard from "./pages/StudentDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import Features from "./pages/Features";
+import Pricing from "./pages/Pricing";
+import Resources from "./pages/Resources";
 
 function App() {
   return (
     <UserAuthContextProvider>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+
         <Route path="/features" element={<Features />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/resources" element={<Resources />} />
         <Route
           path="/student-dashboard/*"
           element={
