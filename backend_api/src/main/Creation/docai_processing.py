@@ -30,4 +30,4 @@ def process_document(file):
     result = docai_client.process_document(request=request)
 
     document_object = result.document
-    return document_object.text
+    return document_object

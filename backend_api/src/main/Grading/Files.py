@@ -1,19 +1,3 @@
-"""
-Assignment:
-id - used to get the actual file from the database
-rubricId - used to match up the assignment with its answer key
-name - name of the assignment. will likely only be used for front-end stuff
-teachers - a list of people who have permission to edit the file
-file - the actual file that contains the assignment
-
-Rubric:
-id - used to get the actual file from the database
--- no assignmentId because the rubric is not tied to a specific assignment
-name - name of the assignment. will likely only be used for front-end stuff
-teachers - a list of people who have permission to edit the file
-file - the actual file that contains the answer key
-"""
-
 class Assignment:
     __slots__ = ["__id", "__rubricId", "__name", "__teachers", "__file"]
 
