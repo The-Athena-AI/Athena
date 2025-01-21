@@ -16,15 +16,14 @@ const AssignmentCreate = () => {
   });
 
   const [classes] = useState([
-    { id: 1, name: 'Web Development 101' },
-    { id: 2, name: 'Technology & Society' },
+    { id: 1, name: 'Writing' }
   ]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Submit to backend
+    // Mock submission - in real app this would connect to backend
     console.log('Submitting assignment:', formData);
-    navigate('..');  // Navigate back to assignment list
+    navigate('/teacher-dashboard/assignments');
   };
 
   const handleChange = (e) => {
@@ -36,99 +35,100 @@ const AssignmentCreate = () => {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Create New Assignment</h1>
+    <div className="p-6 max-w-2xl mx-auto bg-black min-h-screen">
+      <h1 className="text-2xl font-bold mb-6 text-yellow-400">Create New Assignment</h1>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Title</label>
+          <label className="block text-sm font-medium mb-1 text-yellow-400">Title</label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 bg-gray-900 border border-gray-800 rounded-lg text-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Class</label>
+          <label className="block text-sm font-medium mb-1 text-yellow-400">Class</label>
           <select
             name="classId"
             value={formData.classId}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 bg-gray-900 border border-gray-800 rounded-lg text-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
             required
           >
-            <option value="">Select a class</option>
+            <option value="" className="bg-gray-900">Select a class</option>
             {classes.map(cls => (
-              <option key={cls.id} value={cls.id}>{cls.name}</option>
+              <option key={cls.id} value={cls.id} className="bg-gray-900">{cls.name}</option>
             ))}
           </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Description</label>
+          <label className="block text-sm font-medium mb-1 text-yellow-400">Description</label>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 bg-gray-900 border border-gray-800 rounded-lg text-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
             rows="4"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Due Date</label>
+          <label className="block text-sm font-medium mb-1 text-yellow-400">Due Date</label>
           <input
             type="datetime-local"
             name="dueDate"
             value={formData.dueDate}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 bg-gray-900 border border-gray-800 rounded-lg text-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Points</label>
+          <label className="block text-sm font-medium mb-1 text-yellow-400">Points</label>
           <input
             type="number"
             name="points"
             value={formData.points}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 bg-gray-900 border border-gray-800 rounded-lg text-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
             min="0"
             required
           />
         </div>
 
         <div>
-          <label className="flex items-center space-x-2">
+          <label className="flex items-center space-x-2 text-yellow-400">
             <input
               type="checkbox"
               name="aiGradingEnabled"
               checked={formData.aiGradingEnabled}
               onChange={handleChange}
+              className="rounded border-gray-800 text-yellow-400 focus:ring-yellow-400"
             />
-            <span className="text-sm font-medium">Enable AI Grading</span>
+            <span className="text-sm font-medium">Enable Athena Grading</span>
           </label>
         </div>
 
         {formData.aiGradingEnabled && (
           <div>
-            <label className="block text-sm font-medium mb-1">
-              AI Grading Instructions
+            <label className="block text-sm font-medium mb-1 text-yellow-400">
+              Athena Grading Instructions
             </label>
             <textarea
               name="aiGradingInstructions"
               value={formData.aiGradingInstructions}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 bg-gray-900 border border-gray-800 rounded-lg text-yellow-400 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
               rows="3"
-              placeholder="Provide instructions for AI grading..."
+              placeholder="Provide instructions for Athena grading..."
             />
           </div>
         )}
@@ -136,14 +136,14 @@ const AssignmentCreate = () => {
         <div className="flex space-x-4">
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="bg-yellow-400 text-black px-6 py-2 rounded-lg hover:bg-yellow-500 transition-colors font-medium"
           >
             Create Assignment
           </button>
           <button
             type="button"
-            onClick={() => navigate('..')}
-            className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+            onClick={() => navigate('/teacher-dashboard/assignments')}
+            className="bg-gray-800 text-yellow-400 px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
           >
             Cancel
           </button>

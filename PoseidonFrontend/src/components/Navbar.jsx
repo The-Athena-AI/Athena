@@ -60,8 +60,12 @@ const Navbar = () => {
           <a href="/features">
             <li className="p-2 hover:text-yellow-500 cursor-pointer transition duration-300">Features</li>
           </a>
-          <li className="p-2 hover:text-yellow-500 cursor-pointer transition duration-300">Resources</li>
-          <li className="p-2 hover:text-yellow-500 cursor-pointer transition duration-300">Pricing</li>
+          <a href="/resources">
+            <li className="p-2 hover:text-yellow-500 cursor-pointer transition duration-300">Resources</li>
+          </a>
+          <a href="/pricing">
+            <li className="p-2 hover:text-yellow-500 cursor-pointer transition duration-300">Pricing</li>
+          </a>
         </ul>
       </div>
 

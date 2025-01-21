@@ -64,7 +64,7 @@ const LoginComponent = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-96 relative">
+      <div className="bg-black p-6 rounded-lg shadow-lg w-96 relative">
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-400 hover:text-gray-200"
@@ -91,7 +91,7 @@ const LoginComponent = ({ onClose }) => {
             <input
               type="username"
               id="username"
-              className="w-full mt-1 p-2 bg-gray-700 text-white rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400"
+              className="w-full mt-1 p-2 bg-black text-white rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400"
               placeholder="Enter your username"
               value={username}
               onChange={(e) => setUserName(e.target.value)}
@@ -108,7 +108,7 @@ const LoginComponent = ({ onClose }) => {
             <input
               type="email"
               id="email"
-              className="w-full mt-1 p-2 bg-gray-700 text-white rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400"
+              className="w-full mt-1 p-2 bg-black text-white rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -125,7 +125,7 @@ const LoginComponent = ({ onClose }) => {
             <input
               type="password"
               id="password"
-              className="w-full mt-1 p-2 bg-gray-700 text-white rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400"
+              className="w-full mt-1 p-2 bg-black text-white rounded-md border border-gray-600 focus:outline-none focus:ring focus:ring-yellow-400"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
