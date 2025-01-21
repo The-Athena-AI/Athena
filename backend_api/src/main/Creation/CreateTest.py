@@ -1,3 +1,10 @@
+import sys
+import os
+
+# Add project root to PYTHONPATH
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../../"))
+sys.path.append(project_root)
+
 from Athena.backend_api.src.main.Grading import Files
 import CreateFileDAO as DAO
 import docai_processing as docai

@@ -16,11 +16,11 @@ supabase_client = supabase.create_client(supabase_url, supabase_api_key)
 
 def upload_assignment(assignment):
     # upload assignment info to supabase
-    supabase_client.table("Assignments").insert({"id": assignment.get_id(), "rubric id": None, "name": assignment.get_name(), "teachers": None, "file": assignment.get_file()}).execute()
+    supabase_client.table("Assignments").insert({"id": assignment.get_id(), "rubric id": None, "name": assignment.get_name(), "teacher": None, "file": assignment.get_file()}).execute()
 
 def upload_rubric(rubric):
     # upload rubric info to supabase
-    supabase_client.table("Rubrics").insert({"id": rubric.get_id(), "assignment id": None, "name": rubric.get_name(), "teachers": None, "file": rubric.get_file()}).execute()
+    supabase_client.table("Rubrics").insert({"id": rubric.get_id(), "assignment id": None, "name": rubric.get_name(), "teacher": None, "file": rubric.get_file()}).execute()
 
 def get_info_assignment(jsonFile):
     #loads the data from the json file
@@ -30,7 +30,7 @@ def get_info_assignment(jsonFile):
     #processes the pdf file
     file = docai.process_document(pdf)
     #creates the assignment object
-    assignment = Files.Assignment(data["id"], data["rubric id"], data["name"], data["teachers"], file)
+    assignment = Files.Assignment(data["id"], data["rubric id"], data["name"], data["teacher"], file)
     return assignment
 
 def get_info_rubric(jsonFile):
@@ -41,7 +41,7 @@ def get_info_rubric(jsonFile):
     #processes the pdf file
     file = docai.process_document(pdf)
     #creates the rubric object
-    rubric = Files.Rubric(data["id"], data["assignment id"], data["name"], data["teachers"], file)
+    rubric = Files.Rubric(data["id"], data["assignment id"], data["name"], data["teacher"], file)
     return rubric
 
 def decode_base64_to_pdf(base64_string):
