@@ -1,6 +1,4 @@
 import GradingFileDAO as DAO
-import Files as Files
-import PyPDF2
 
 def main():
     assignment_id = "3"

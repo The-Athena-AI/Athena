@@ -1,14 +1,19 @@
 import Files as Files
 
 import os
-import openai
 import supabase
+import google.generativeai as genai
 
 from dotenv import load_dotenv
 load_dotenv()
 
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model=genai.GenerativeModel(
+  model_name="gemini-1.5-flash",
+  system_instruction="You are a helpful assistant grading an assignment based on a rubric or answer key. You will respond with a JSON object with the following keys: 'grade' and 'feedback'."
+)
+
 # list of keys
-openai.api_key = os.getenv("OPENAI_API_KEY")
 supabase_url = os.getenv("SUPABASE_URL")
 supabase_api_key = os.getenv("SUPABASE_API_KEY")
 
@@ -34,15 +39,5 @@ def get_rubric(rubric_id):
     return rubric
 
 def grade_assignment(assignment, rubric):
-    # use openAI to grade the assignment
-    completion = openai.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "developer",
-              "content": "You are a helpful assistant grading an assignment based on a rubric or answer key. You will respond with a JSON object with the following keys: 'grade' and 'feedback'."},
-            {"role": "user",
-             "content": f"Here is the assignment: {assignment.get_file()}\nHere is the rubric or answer key: {rubric.get_file()}"},
-        ],
-        max_tokens=1000
-    )
-    return completion.choices[0].message.content
+    response = model.generate_content(f"Here is the assignment: {assignment.get_file()}\nHere is the rubric or answer key: {rubric.get_file()}")
+    return response.text
