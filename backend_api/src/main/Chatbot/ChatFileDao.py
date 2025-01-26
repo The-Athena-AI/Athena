@@ -1,6 +1,9 @@
 import openai
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
-openai.api_key = "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"
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def chat(message):
     completion = openai.chat.completions.create(

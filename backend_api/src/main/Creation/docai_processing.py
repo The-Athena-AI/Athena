@@ -1,10 +1,13 @@
 from google.api_core.client_options import ClientOptions
 from google.cloud import documentai
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
-PROJECT_ID = "athena-439002"
-LOCATION = "us"  # Format is 'us' or 'eu'
-PROCESSOR_ID = "aa9bc53cdb71f5b1"  # Create processor in Cloud Console
+PROJECT_ID = os.getenv("PROJECT_ID")
+LOCATION = os.getenv("LOCATION")
+PROCESSOR_ID = os.getenv("PROCESSOR_ID")
 
 # Instantiates a client
 docai_client = documentai.DocumentProcessorServiceClient(

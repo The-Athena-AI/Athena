@@ -3,24 +3,29 @@ import supabase
 import json
 import base64
 import io
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
 
 import docai_processing as docai
 from Athena.backend_api.src.main.Grading import Files
 
+
 # list of keys
-supabase_url = "https://wtgulmijdydgulpqhrfb.supabase.co"
-supabase_api_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0Z3VsbWlqZHlkZ3VscHFocmZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU5NTUxNDMsImV4cCI6MjA1MTUzMTE0M30.DXzDEFfh6mg07vwhnjrBSPUOJVesLzqRxC6QIfk3mf8"
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_api_key = os.getenv("SUPABASE_API_KEY")
 
 # list of clients
 supabase_client = supabase.create_client(supabase_url, supabase_api_key)
 
 def upload_assignment(assignment):
     # upload assignment info to supabase
-    supabase_client.table("Assignments").insert({"id": assignment.get_id(), "rubric id": None, "name": assignment.get_name(), "teacher": None, "file": assignment.get_file()}).execute()
+    supabase_client.table("Assignments").insert({"id": assignment.get_id(), "rubric_id": None, "name": assignment.get_name(), "teacher_id": None, "file": assignment.get_file()}).execute()
 
 def upload_rubric(rubric):
     # upload rubric info to supabase
-    supabase_client.table("Rubrics").insert({"id": rubric.get_id(), "assignment id": None, "name": rubric.get_name(), "teacher": None, "file": rubric.get_file()}).execute()
+    supabase_client.table("Rubrics").insert({"id": rubric.get_id(), "assignment_id": None, "name": rubric.get_name(), "teacher_id": None, "file": rubric.get_file()}).execute()
 
 def get_info_assignment(jsonFile):
     #loads the data from the json file
@@ -30,7 +35,7 @@ def get_info_assignment(jsonFile):
     #processes the pdf file
     file = docai.process_document(pdf)
     #creates the assignment object
-    assignment = Files.Assignment(data["id"], data["rubric id"], data["name"], data["teacher"], file)
+    assignment = Files.Assignment(data["id"], data["rubric_id"], data["name"], data["teacher_id"], file)
     return assignment
 
 def get_info_rubric(jsonFile):
@@ -41,7 +46,7 @@ def get_info_rubric(jsonFile):
     #processes the pdf file
     file = docai.process_document(pdf)
     #creates the rubric object
-    rubric = Files.Rubric(data["id"], data["assignment id"], data["name"], data["teacher"], file)
+    rubric = Files.Rubric(data["id"], data["assignment_id"], data["name"], data["teacher_id"], file)
     return rubric
 
 def decode_base64_to_pdf(base64_string):
