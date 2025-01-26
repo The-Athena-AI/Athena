@@ -13,8 +13,8 @@ def main():
     pdf = None
     with open("C:/Users/undea/Athena/Athena/backend_api/src/main/Creation/Winnie_the_Pooh_3_Pages.pdf", "rb") as pdf_file:
         pdf = docai.process_document(pdf_file)
-    assignment = Files.Assignment("3", "rubric_id", "Assignment 3", "teacher_id", pdf)
-    DAO.upload_assignment(assignment)
+    rubric = Files.Rubric("3", "rubric_id", "Rubric 3", "teacher_id", pdf)
+    DAO.upload_rubric(rubric)
     print("Hello World")
 
 if __name__ == "__main__":

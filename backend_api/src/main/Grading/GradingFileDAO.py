@@ -18,17 +18,19 @@ supabase_client = supabase.create_client(supabase_url, supabase_api_key)
 def get_assignment(assignment_id):
     # get assignment info from supabase
     assignment_info = supabase_client.table("Assignments").select("*").eq("id", assignment_id).execute()
+    data = assignment_info.data
 
     # create assignment object
-    assignment = Files.Assignment(assignment_id, assignment_info[1][0]["rubric_id"], assignment_info[1][0]["name"], assignment_info[1][0]["teacher_id"], assignment_info[1][0]["file"])
+    assignment = Files.Assignment(assignment_id, data[0]["rubric_id"], data[0]["name"], data[0]["teacher_id"], data[0]["file"])
     return assignment
 
 def get_rubric(rubric_id):
     # get rubric info from supabase
     rubric_info = supabase_client.table("Rubrics").select("*").eq("id", rubric_id).execute()
+    data = rubric_info.data
 
     # create rubric object
-    rubric = Files.Rubric(rubric_id, rubric_info[1][0]["assignment_id"], rubric_info[1][0]["name"], rubric_info[1][0]["teacher_id"], rubric_info[1][0]["file"])
+    rubric = Files.Rubric(rubric_id, data[0]["assignment_id"], data[0]["name"], data[0]["teacher_id"], data[0]["file"])
     return rubric
 
 def grade_assignment(assignment, rubric):

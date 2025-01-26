@@ -1,10 +1,20 @@
 from flask import Flask, request, jsonify
+import json
 import ChatFileDao as DAO
 
 app = Flask(__name__)
 
 @app.route('/chat', methods=['POST'])
 def chat():
+    session_id = request.json.get('session_id')
     message = request.json.get('message')
-    response = DAO.chat(message)
+    
+    conversation_history = DAO.get_chat_history(session_id)
+
+    response = DAO.chat(message, conversation_history)
+    
+    conversation_history.append({"role": "user", "parts": message})
+    conversation_history.append({"role": "model", "parts": response})
+    DAO.update_chat_history(session_id, conversation_history)
+    
     return jsonify(response)

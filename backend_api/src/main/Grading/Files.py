@@ -26,16 +26,19 @@ class Assignment:
 
 
 class Rubric:
-    __slots__ = ["__id", "__name", "__teachers", "__file"]
+    __slots__ = ["__id", "__assignmentId", "__name", "__teachers", "__file"]
 
-    def __init__(self, id, name, teacher, file):
+    def __init__(self, id, assignmentId, name, teacher, file):
         self.__id = id
+        self.__assignmentId = assignmentId
         self.__name = name
         self.__teachers = [teacher]
         self.__file = file
 
     def get_id(self):
         return self.__id
+    def get_assignmentId(self):
+        return self.__assignmentId
     def get_name(self):
         return self.__name
     def get_teachers(self):
