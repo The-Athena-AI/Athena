@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-import json
 import ChatFileDao as DAO
 
 app = Flask(__name__)
@@ -18,3 +17,8 @@ def chat():
     DAO.update_chat_history(session_id, conversation_history)
     
     return jsonify(response)
+
+@app.route('/upload_chat_history', methods=['POST'])
+def upload_chat_history():
+    user_id = request.json.get('user_id')
+    DAO.upload_chat_history(user_id)

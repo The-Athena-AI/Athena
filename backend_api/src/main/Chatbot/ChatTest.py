@@ -1,8 +1,8 @@
 import ChatFileDao as DAO
 
 def main():
-    session_id = 1
-    message = "Hello"
+    session_id = 2
+    message = "what was my last message?"
     
     conversation_history = DAO.get_chat_history(session_id)
 
@@ -13,6 +13,8 @@ def main():
     DAO.update_chat_history(session_id, conversation_history)
     
     print(response)
+
+    DAO.upload_chat_history(1)
 
 if __name__ == "__main__":
     main()
