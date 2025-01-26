@@ -10,7 +10,7 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model=genai.GenerativeModel(
   model_name="gemini-1.5-flash",
-  system_instruction="You are a helpful assistant grading an assignment based on a rubric or answer key. You will respond with a JSON object with the following keys: 'grade' and 'feedback'."
+  system_instruction="You are a helpful assistant grading an assignment based on a rubric or answer key. You will respond with a JSON object with the following keys: 'grade' and 'feedback'. The grade should be a number between 0 and 100. The feedback should be an array of tuples with the following keys: 'questions/lines' and 'feedback'. The questions/lines should be what the feedback is applies to. The feedback should be a string that is a summary of what the student did wrong and how they can improve."
 )
 
 # list of keys
@@ -22,22 +22,14 @@ supabase_client = supabase.create_client(supabase_url, supabase_api_key)
 
 def get_assignment(assignment_id):
     # get assignment info from supabase
-    assignment_info = supabase_client.table("Assignments").select("*").eq("id", assignment_id).execute()
+    assignment_info = supabase_client.table("Assignments").select("id, rubric, class_id, file").eq("id", assignment_id).execute()
     data = assignment_info.data
 
     # create assignment object
-    assignment = Files.Assignment(assignment_id, data[0]["rubric_id"], data[0]["name"], data[0]["teacher_id"], data[0]["file"])
+    assignment = Files.Assignment(assignment_id, data[0]["class_id"], data[0]["rubric"], data[0]["file"])
     return assignment
 
-def get_rubric(rubric_id):
-    # get rubric info from supabase
-    rubric_info = supabase_client.table("Rubrics").select("*").eq("id", rubric_id).execute()
-    data = rubric_info.data
-
-    # create rubric object
-    rubric = Files.Rubric(rubric_id, data[0]["assignment_id"], data[0]["name"], data[0]["teacher_id"], data[0]["file"])
-    return rubric
-
-def grade_assignment(assignment, rubric):
-    response = model.generate_content(f"Here is the assignment: {assignment.get_file()}\nHere is the rubric or answer key: {rubric.get_file()}")
+def grade_assignment(completed_assignment, assignment):
+    response = model.generate_content(f"Here is the assignment: {completed_assignment.get_file()}\nHere is the rubric or answer key: {assignment.get_rubric()}")
+    #supabase_client.table("SubmittedAssignment").insert({"id": None, "assigment_id": None, "student_id": None, }).execute()
     return response.text

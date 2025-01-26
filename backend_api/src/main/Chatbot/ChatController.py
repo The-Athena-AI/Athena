@@ -6,9 +6,10 @@ app = Flask(__name__)
 @app.route('/chat', methods=['POST'])
 def chat():
     session_id = request.json.get('session_id')
+    user_id = request.json.get('user_id')
     message = request.json.get('message')
     
-    conversation_history = DAO.get_chat_history(session_id)
+    conversation_history = DAO.get_chat_history(session_id, user_id)
 
     response = DAO.chat(message, conversation_history)
     

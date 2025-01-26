@@ -21,15 +21,20 @@ def chat(message, conversation_history):
     response = chat.send_message(message)
     return response.text
 
-def get_chat_history(session_id):
+def get_chat_history(session_id, user_id):
     with open('Athena/backend_api/src/main/Chatbot/chatHistory.json', 'r') as file:
         data = json.load(file)
-    
+
     for chat in data:
         if chat['session_id'] == session_id:
             return chat['conversation_history']
+        
+    chat_history = supabase_client.table("AiConversations").select("*").eq("user_id", user_id).eq("session_id", session_id).execute()
     
-    return []
+    if chat_history.data:
+        return chat_history.data[0]['conversation']
+    else:
+        return []
 
 def update_chat_history(session_id, conversation_history):
     with open('Athena/backend_api/src/main/Chatbot/chatHistory.json', 'r') as file:

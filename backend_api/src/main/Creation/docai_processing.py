@@ -9,14 +9,10 @@ PROJECT_ID = os.getenv("PROJECT_ID")
 LOCATION = os.getenv("LOCATION")
 PROCESSOR_ID = os.getenv("PROCESSOR_ID_MATH")
 
-# Instantiates a client
 docai_client = documentai.DocumentProcessorServiceClient(
     client_options=ClientOptions(api_endpoint=f"{LOCATION}-documentai.googleapis.com")
 )
 
-# The full resource name of the processor, e.g.:
-# projects/project-id/locations/location/processor/processor-id
-# You must create new processors in the Cloud Console first
 RESOURCE_NAME = docai_client.processor_path(PROJECT_ID, LOCATION, PROCESSOR_ID)
 
 def process_document(file):    
