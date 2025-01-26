@@ -7,7 +7,7 @@ load_dotenv()
 
 PROJECT_ID = os.getenv("PROJECT_ID")
 LOCATION = os.getenv("LOCATION")
-PROCESSOR_ID = os.getenv("PROCESSOR_ID")
+PROCESSOR_ID = os.getenv("PROCESSOR_ID_MATH")
 
 # Instantiates a client
 docai_client = documentai.DocumentProcessorServiceClient(
