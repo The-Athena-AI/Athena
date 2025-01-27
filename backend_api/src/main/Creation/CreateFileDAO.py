@@ -8,7 +8,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-import docai_processing as docai
+from Athena.backend_api.src.main.Creation import docai_processing as docai
 from Athena.backend_api.src.main.Grading import Files
 
 # list of keys

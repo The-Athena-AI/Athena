@@ -1,9 +1,6 @@
-from flask import Flask, request, jsonify
-import CreateFileDAO as DAO
+from flask import request, jsonify
+from Athena.backend_api.src.main.Creation import CreateFileDAO as DAO
 
-app = Flask(__name__)
-
-@app.route('/upload_assignment', methods=['POST'])
 def upload_assignment():
     file = request.json.get('assignment')
     assignment = DAO.get_file_info(file)

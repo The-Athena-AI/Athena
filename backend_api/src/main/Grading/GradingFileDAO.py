@@ -1,5 +1,5 @@
 import json
-import Files as Files
+from Athena.backend_api.src.main.Grading import Files
 
 import os
 import supabase

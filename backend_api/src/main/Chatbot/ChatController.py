@@ -1,9 +1,6 @@
-from flask import Flask, request, jsonify
-import ChatFileDao as DAO
+from flask import request, jsonify
+from Athena.backend_api.src.main.Chatbot import ChatFileDao as DAO
 
-app = Flask(__name__)
-
-@app.route('/chat', methods=['POST'])
 def chat():
     session_id = request.json.get('session_id')
     user_id = request.json.get('user_id')
@@ -19,7 +16,6 @@ def chat():
     
     return jsonify(response)
 
-@app.route('/upload_chat_history', methods=['POST'])
 def upload_chat_history():
     user_id = request.json.get('user_id')
     DAO.upload_chat_history(user_id)
