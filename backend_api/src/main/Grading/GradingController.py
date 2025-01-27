@@ -10,5 +10,5 @@ def grade():
     completed_file = docai.process_file(completed_assignment)
     assignment = DAO.get_assignment(assignment_id)
 
-    grade = DAO.grade_assignment(completed_assignment, assignment.get_rubric(), student_id)
+    grade = DAO.grade_assignment(completed_file, assignment.get_rubric(), student_id)
     return jsonify(grade)
