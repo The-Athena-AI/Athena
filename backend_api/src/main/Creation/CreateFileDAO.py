@@ -11,7 +11,6 @@ load_dotenv()
 import docai_processing as docai
 from Athena.backend_api.src.main.Grading import Files
 
-
 # list of keys
 supabase_url = os.getenv("SUPABASE_URL")
 supabase_api_key = os.getenv("SUPABASE_API_KEY")
@@ -21,17 +20,23 @@ supabase_client = supabase.create_client(supabase_url, supabase_api_key)
 
 def upload_assignment(assignment):
     # upload assignment info to supabase
-    supabase_client.table("CreateAssignment").insert({"id": assignment.get_id(), "class_id": assignment.get_classId(), "rubric_id": assignment.get_rubricId(), "file": assignment.get_file()}).execute()
+    supabase_client.table("CreateAssignments").insert({"id": assignment.get_id(), "class_id": assignment.get_classId(), "rubric": assignment.get_rubric(), "file": assignment.get_file()}).execute()
 
-def get_info_assignment(jsonFile):
+def get_file_info(jsonFile):
     #loads the data from the json file
     data = json.loads(jsonFile)
-    #decodes the base64 string to a pdf file
-    pdf = decode_base64_to_pdf(data["file"])
-    #processes the pdf file
-    file = docai.process_document(pdf)
+    
+    #decodes the base64 strings to pdf files
+    pdfAssignment = decode_base64_to_pdf(data["file"])
+    pdfRubric = decode_base64_to_pdf(data["rubric"])
+
+    #processes the pdf files
+    file = docai.process_document(pdfAssignment)
+    rubric = docai.process_document(pdfRubric)
+    
     #creates the assignment object
-    assignment = Files.Assignment(data["id"], data["rubric_id"], data["name"], data["teacher_id"], file)
+    assignment = Files.Assignment(data["id"], data["class_id"], rubric, file)
+    
     return assignment
 
 def decode_base64_to_pdf(base64_string):
