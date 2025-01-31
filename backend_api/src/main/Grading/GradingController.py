@@ -1,6 +1,6 @@
 from flask import request, jsonify
-from backend_api.src.main.Grading import GradingFileDAO as DAO
-from backend_api.src.main.Creation import docai_processing as docai
+from Athena.backend_api.src.main.Grading import GradingFileDAO as DAO
+from Athena.backend_api.src.main.Creation import docai_processing as docai
 import os
 import supabase
 

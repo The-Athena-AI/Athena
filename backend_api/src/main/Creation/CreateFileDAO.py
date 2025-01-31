@@ -8,8 +8,8 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from backend_api.src.main.Creation import docai_processing as docai
-from backend_api.src.main.Grading import Files
+from Athena.backend_api.src.main.Creation import docai_processing as docai
+from Athena.backend_api.src.main.Grading import Files
 
 # list of keys
 supabase_url = os.getenv("SUPABASE_URL")
