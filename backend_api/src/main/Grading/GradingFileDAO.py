@@ -1,5 +1,5 @@
 import json
-from Athena.backend_api.src.main.Grading import Files
+from backend_api.src.main.Grading import Files
 
 import os
 import supabase
@@ -41,3 +41,13 @@ def grade_assignment(completed_assignment, assignment, student_id):
 
     supabase_client.table("SubmittedAssignment").insert({"id": None, "assigment_id": assignment.get_id(), "student_id": student_id, "ai_grade": grade, "ai_feedback": feedback, }).execute()
     return response.text
+
+"""
+{
+    "grade": 85,
+    "feedback": [
+        {"questions/lines": "1-5", "feedback": "You did not follow the instructions correctly."},
+        {"questions/lines": "6-10", "feedback": "You did not follow the instructions correctly."}
+    ]
+}
+"""

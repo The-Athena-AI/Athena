@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from Athena.backend_api.src.main.Chatbot import ChatFileDao as DAO
+from backend_api.src.main.Chatbot import ChatFileDao as DAO
 
 def chat():
     session_id = request.json.get('session_id')
