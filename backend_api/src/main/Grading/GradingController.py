@@ -15,9 +15,9 @@ def grade():
     completed_assignment_url = request.json['completed_assignment_url']
     student_id = request.json['student_id']
 
-    completed_assignment = supabase_client.storage.from_("assignments").download(completed_assignment_url);
+    completed_assignment = supabase_client.storage.from_("assignments").download("1737950739841_tobe175zf1k.pdf");
     
-    completed_file = docai.process_file(completed_assignment)
+    completed_file = docai.process_document(completed_assignment)
     assignment = DAO.get_assignment(assignment_id)
 
     grade = DAO.grade_assignment(completed_file, assignment.get_rubric(), student_id)

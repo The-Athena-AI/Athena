@@ -9,8 +9,10 @@ from flask import Flask
 from Athena.backend_api.src.main.Creation.CreateController import upload_assignment
 from Athena.backend_api.src.main.Chatbot.ChatController import chat, upload_chat_history
 from Athena.backend_api.src.main.Grading.GradingController import grade
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # Register routes from CreateController
 app.add_url_rule('/upload_assignment', 'upload_assignment', upload_assignment, methods=['POST'])

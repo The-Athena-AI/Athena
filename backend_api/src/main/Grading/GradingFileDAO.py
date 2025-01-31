@@ -39,8 +39,12 @@ def grade_assignment(completed_assignment, assignment, student_id):
     grade = data["grade"]
     feedback = data["feedback"]
 
-    supabase_client.table("SubmittedAssignment").insert({"id": None, "assigment_id": assignment.get_id(), "student_id": student_id, "ai_grade": grade, "ai_feedback": feedback, }).execute()
-    return response.text
+    submission_id = supabase_client.table("SubmittedAssignment").insert({"id": None, "assigment_id": assignment.get_id(), "student_id": student_id, "ai_grade": grade, "ai_feedback": feedback, }).execute()
+
+    string = response.text
+    string += f"\nsubmission_id: {submission_id}"
+
+    return string
 
 """
 {
@@ -49,5 +53,6 @@ def grade_assignment(completed_assignment, assignment, student_id):
         {"questions/lines": "1-5", "rubric lines": "1-5", "feedback": "You did not follow the instructions correctly."},
         {"questions/lines": "6-10", "rubric lines": "1-5", "feedback": "You did not follow the instructions correctly."}
     ]
+    "submission_id": "123"
 }
 """
