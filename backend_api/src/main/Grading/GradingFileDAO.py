@@ -11,7 +11,13 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model=genai.GenerativeModel(
   model_name="gemini-1.5-flash",
-  system_instruction="You are a helpful assistant grading an assignment based on a rubric or answer key. You will respond with a JSON object with the following keys: 'grade' and 'feedback'. The grade should be a number between 0 and 100. The feedback should be an array of tuples with the following keys: 'questions/lines', 'rubric lines', 'feedback'. The questions/lines should be what the feedback is applies to. The rubric lines should be the area of the rubric that the questions/lines are getting wrong. The feedback should be a string that is a summary of what the student did wrong and how they can improve."
+  system_instruction="""
+  You are a helpful assistant grading an assignment based on a rubric or answer key.
+  You will respond with a JSON object with the following keys: 'grade' and 'feedback'.
+  The grade should be a number between 0 and 100. The feedback should be an array of tuples with the following keys: 'questions/lines', 'rubric lines', 'feedback'.
+  The questions/lines should be what the feedback is applies to. The rubric lines should be the area of the rubric that the questions/lines are getting wrong.
+  The feedback should be a string that is a summary of what the student did wrong and how they can improve.
+  """
 )
 
 # list of keys
@@ -39,7 +45,7 @@ def grade_assignment(completed_assignment, assignment, student_id):
     grade = data["grade"]
     feedback = data["feedback"]
 
-    submission_id = supabase_client.table("SubmittedAssignment").insert({"id": None, "assigment_id": assignment.get_id(), "student_id": student_id, "ai_grade": grade, "ai_feedback": feedback, }).execute()
+    submission_id = supabase_client.table("SubmittedAssignment").insert({"id": None, "assignment_id": assignment.get_id(), "student_id": student_id, "ai_grade": grade, "ai_feedback": feedback, }).execute()
 
     string = response.text
     string += f"\nsubmission_id: {submission_id}"
