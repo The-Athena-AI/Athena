@@ -4,6 +4,7 @@ from Athena.backend_api.src.main.Grading import Files
 import os
 import supabase
 import google.generativeai as genai
+import re
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -15,8 +16,12 @@ model=genai.GenerativeModel(
   You are a helpful assistant grading an assignment based on a rubric or answer key.
   You will respond with a JSON object with the following keys: 'grade' and 'feedback'.
   The grade should be a number between 0 and 100. The feedback should be an array of tuples with the following keys: 'questions/lines', 'rubric lines', 'feedback'.
-  The questions/lines should be what the feedback is applies to. The rubric lines should be the area of the rubric that the questions/lines are getting wrong.
+  The questions/lines should be what the feedback is applies to.
+  The rubric lines should be the area of the rubric that the questions/lines are getting wrong.
   The feedback should be a string that is a summary of what the student did wrong and how they can improve.
+  Please return the grade and feedback in **pure JSON format**, without markdown formatting.
+  Example format:
+  '{"grade": 85, "feedback": [{"questions/lines": "Line 1-10", "rubric lines": "Line 1-10", "feedback": "Good work!"}]}'
   """
 )
 
@@ -36,21 +41,35 @@ def get_assignment(assignment_id):
     assignment = Files.Assignment(assignment_id, data[0]["class_id"], data[0]["rubric"], data[0]["file"])
     return assignment
 
-def grade_assignment(completed_assignment, assignment, student_id):
-    response = model.generate_content(f"Here is the assignment: {completed_assignment.get_file()}\nHere is the rubric or answer key: {assignment.get_rubric()}")
+def grade_assignment(completed_assignment, rubric, student_id):
+    response = model.generate_content(f"Here is the assignment: {completed_assignment}\nHere is the rubric or answer key: {rubric}")
 
-    with open(response.text, "r") as file:
-        data = json.load(file)
+    if not response.text.strip():  # Check if response is empty
+        raise ValueError("Empty response from AI model. Check your model output.")
+    
+    cleaned_text = re.sub(r"```json\s*", "", response.text)  # Remove opening
+    cleaned_text = re.sub(r"```$", "", cleaned_text)  # Remove closing
+
+    try:
+        data = json.loads(cleaned_text)  # Convert JSON response
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON response: {cleaned_text}") from e
 
     grade = data["grade"]
     feedback = data["feedback"]
-
-    submission_id = supabase_client.table("SubmittedAssignment").insert({"id": None, "assignment_id": assignment.get_id(), "student_id": student_id, "ai_grade": grade, "ai_feedback": feedback, }).execute()
+    
+    submission = {
+        "assignment_id": "1352a4b8-1323-4b63-ad29-656c5e367a28",
+        "student_id": student_id,
+        "ai_grade": grade,
+        "ai_feedback": feedback,
+    }
+    submission_id = supabase_client.table("SubmittedAssignment").insert(submission).execute()
 
     string = response.text
     string += f"\nsubmission_id: {submission_id}"
 
-    return string
+    return response.text
 
 """
 {
