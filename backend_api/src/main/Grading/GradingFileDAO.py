@@ -6,6 +6,7 @@ import supabase
 import google.generativeai as genai
 import re
 from Athena.backend_api.src.main.Creation import docai_processing as docai
+import requests
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -15,12 +16,12 @@ example_output = """
     "grade": 85,
     "overview": "You did not follow the instructions correctly.",
     "feedback_strengths": [
-        {"questions/lines": "This is the hook. This is the seccond sentence", "rubric lines": "1-5", "feedback": "your hook was good."},
-        {"questions/lines": "This is the thesis statement", "rubric lines": "11-20", "feedback": "your thesis statement was good and set up the essay well."}
+        {"questions/lines": "This is the hook. This is the seccond sentence", "rubric lines": "Sophisticated use of nouns and verbs make the essay very informative", "feedback": "your hook was good."},
+        {"questions/lines": "This is the thesis statement", "rubric lines": "Presents ideas in an original manner", "feedback": "your thesis statement was good and set up the essay well."}
     ],
     "feedback_weaknesses": [
-        {"questions/lines": "This is the third sentence", "rubric lines": "6-10", "feedback": "your summary was incorrect."},
-        {"questions/lines": "This is the seccond paragraph", "rubric lines": "21-30", "feedback": "your topic sentence for the seccond paragraph was not good."}
+        {"questions/lines": "This is the third sentence", "rubric lines": "Needs more nouns and verbs", "feedback": "your summary was incorrect."},
+        {"questions/lines": "This is the seccond paragraph", "rubric lines": "Sentence structure is evident; sentences mostly flow", "feedback": "your topic sentence for the seccond paragraph was not good."}
     ],
 }
 """
@@ -36,11 +37,11 @@ model=genai.GenerativeModel(
   The overview should be a string that gives an overview of why you gave the grade.
   The feedback_strengths should be an array of tuples with the following keys: 'questions/lines', 'rubric lines', 'feedback'.
   The questions/lines should be the exact text from the assignment that the feedback is applies to.
-  The rubric lines should be the area of the rubric that the questions/lines are getting wrong.
+  The rubric lines should be the exact text from the rubric that the feedback is applies to.
   The feedback in this array should be a string that is a summary of what the student did well.
   The feedback_weaknesses should be an array of tuples with the following keys: 'questions/lines', 'rubric lines', 'feedback'.
   The questions/lines should be the exact text from the assignment that the feedback is applies to.
-  The rubric lines should be the area of the rubric that the questions/lines are getting wrong.
+  The rubric lines should be the exact text from the rubric that the feedback is applies to.
   The feedback in this array should be a string that is a summary of what the student did wrong.
   Please return the grade, overview, and feedback in **pure JSON format**, without markdown formatting.
   Example format: {example_output}
@@ -56,26 +57,30 @@ supabase_client = supabase.create_client(supabase_url, supabase_api_key)
 
 def get_assignment(assignment_id):
     # get assignment info from supabase
-    assignment_info = supabase_client.table("CreateAssignments").select("id, class_id, rubric, file").eq("id", assignment_id).execute()
+    assignment_info = supabase_client.table("CreateAssignments").select("id, class_id, rubric_url, file").eq("id", assignment_id).execute()
     data = assignment_info.data
 
     # create assignment object
-    assignment = Files.Assignment(assignment_id, data[0]["class_id"], data[0]["rubric"], data[0]["file"])
+    assignment = Files.Assignment(assignment_id, data[0]["class_id"], data[0]["rubric_url"], data[0]["file"])
     return assignment
 
 def grade_assignment(completed_assignment_path, assignment, student_id, submission_id):
     completed_assignment = supabase_client.storage.from_("assignments").download(completed_assignment_path);
     completed_assignment_url = supabase_client.storage.from_("assignments").get_public_url(completed_assignment_path)
-
-    print(completed_assignment_url)
     
-    with open("documents/asdf.pdf", "wb+") as file:
+    with open("documents/completed_assignment.pdf", "wb+") as file:
         file.write(completed_assignment)
     completed_file = docai.process_document(file)
 
-    print(completed_file)
+    rubric = requests.get(assignment.get_rubric())
 
-    response = model.generate_content(f"Here is the assignment: {completed_file}\nHere is the rubric or answer key: {assignment.get_rubric()}")
+    with open("documents/completed_assignment.pdf", "wb+") as file:
+        file.write(rubric.content)
+    rubric_file = docai.process_document(file)
+
+    print(rubric_file)
+
+    response = model.generate_content(f"Here is the assignment: {completed_file}\nHere is the rubric or answer key: {rubric_file}")
 
     if not response.text.strip():
         raise ValueError("Empty response from AI model. Check your model output.")
@@ -119,10 +124,14 @@ def grade_assignment(completed_assignment_path, assignment, student_id, submissi
             "file_text": completed_file
         }
         
-    returned_id = supabase_client.table("SubmittedAssignment").upsert(submission, returning="id").execute()
+    returned_id = supabase_client.table("SubmittedAssignment").upsert(submission, returning="representation").execute()
 
-    #does not work properly
-    string = response.text
-    string += f"\nsubmission_id: {returned_id}"
+    # if response.data:
+    #     returned_id = response.data[0].get("id")  # Get the ID from the first row
+    # else:
+    #     returned_id = None  # Handle empty response
 
-    return string
+    # string = response.text
+    # string += f"\nsubmission_id: {returned_id}"
+
+    return response.text

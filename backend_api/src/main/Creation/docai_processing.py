@@ -16,7 +16,7 @@ docai_client = documentai.DocumentProcessorServiceClient(
 RESOURCE_NAME = docai_client.processor_path(PROJECT_ID, LOCATION, PROCESSOR_ID)
 
 def process_document(file):
-    with open("documents/asdf.pdf", "rb") as file_reader:
+    with open("documents/completed_assignment.pdf", "rb") as file_reader:
         # Read the file into memory
         image_content = file_reader.read()
 
