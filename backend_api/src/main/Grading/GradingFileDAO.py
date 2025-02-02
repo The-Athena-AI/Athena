@@ -69,7 +69,7 @@ def grade_assignment(completed_assignment_path, assignment, student_id, submissi
 
     print(completed_assignment_url)
     
-    with open("documents/test2.pdf", "wb+") as file:
+    with open("documents/asdf.pdf", "wb+") as file:
         file.write(completed_assignment)
     completed_file = docai.process_document(file)
 
