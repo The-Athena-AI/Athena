@@ -1,6 +1,5 @@
 from flask import request, jsonify
 from Athena.backend_api.src.main.Grading import GradingFileDAO as DAO
-from Athena.backend_api.src.main.Creation import docai_processing as docai
 import os
 import supabase
 
@@ -16,15 +15,12 @@ def grade():
     student_id = request.json['student_id']
     submission_id = request.json['submission_id']
 
-    completed_assignment = supabase_client.storage.from_("assignments").download(completed_assignment_path);
+    #completed_assignment_path = "1738474390911_8kg7hks4xu4.pdf"
+    print(completed_assignment_path)
     
-    with open("documents/completed_assignment.pdf", "wb+") as file:
-        file.write(completed_assignment)
-    
-    completed_file = docai.process_document(file)
     assignment = DAO.get_assignment(assignment_id)
 
-    grade = DAO.grade_assignment(completed_file, assignment, student_id, submission_id)
+    grade = DAO.grade_assignment(completed_assignment_path, assignment, student_id, submission_id)
     return jsonify(grade)
 
 # completed_assignment_path: folder/file_name

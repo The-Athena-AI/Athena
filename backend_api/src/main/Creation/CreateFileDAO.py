@@ -18,10 +18,6 @@ supabase_api_key = os.getenv("SUPABASE_API_KEY")
 # list of clients
 supabase_client = supabase.create_client(supabase_url, supabase_api_key)
 
-def upload_assignment(assignment):
-    # upload assignment info to supabase
-    supabase_client.table("CreateAssignments").insert({"id": assignment.get_id(), "class_id": assignment.get_classId(), "rubric": assignment.get_rubric(), "file": assignment.get_file()}).execute()
-
 def get_file_info(jsonFile):
     #loads the data from the json file
     data = json.loads(jsonFile)
