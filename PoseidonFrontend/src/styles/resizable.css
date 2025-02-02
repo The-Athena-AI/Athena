@@ -1,0 +1,94 @@
+/* Resizable container styles */
+.react-resizable {
+  position: relative;
+}
+
+/* Prevent text selection while resizing */
+.resizing {
+  user-select: none;
+  cursor: col-resize !important;
+}
+
+.resizing iframe {
+  pointer-events: none;
+}
+
+/* Custom resizer handle */
+.resizer-handle {
+  width: 4px;
+  margin: 0 -2px;
+  background-color: rgba(229, 231, 235, 0.2);
+  cursor: col-resize;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.resizer-handle:hover,
+.resizer-handle.active {
+  background-color: #FCD34D;
+  width: 6px;
+  margin: 0 -3px;
+}
+
+.resizer-handle::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: 0;
+  bottom: 0;
+  cursor: col-resize;
+}
+
+.react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2IDYiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmZmYwMCIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iNnB4Ij48ZyBvcGFjaXR5PSIwLjMwMiI+PHBhdGggZD0iTSA2IDYgTCAwIDYgTCAwIDQuMiBMIDQgNC4yIEwgNC4yIDQuMiBMIDQuMiAwIEwgNiAwIEwgNiA2IEwgNiA2IFoiIGZpbGw9IiMwMDAwMDAiLz48L2c+PC9zdmc+');
+  background-position: bottom right;
+  padding: 0 3px 3px 0;
+  transition: all 0.3s ease;
+}
+
+.react-resizable-handle-se {
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+}
+
+.react-resizable-handle-e {
+  right: 0;
+  top: 50%;
+  cursor: e-resize;
+  transform: translateY(-50%);
+}
+
+.react-resizable-handle-s {
+  bottom: 0;
+  left: 50%;
+  cursor: s-resize;
+  transform: translateX(-50%);
+}
+
+/* Divider styles */
+.resizer-divider {
+  width: 4px;
+  margin: 0 -2px;
+  background-color: rgba(229, 231, 235, 0.2);
+  cursor: col-resize;
+  transition: background-color 0.2s ease;
+}
+
+.resizer-divider:hover,
+.resizer-divider.active {
+  background-color: #FCD34D;
+}
+
+/* Handle hover effects */
+.react-resizable-handle:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
+} 
