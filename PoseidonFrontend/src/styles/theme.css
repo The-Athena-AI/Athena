@@ -1,0 +1,291 @@
+:root {
+  /* Default theme variables */
+  --transition-duration: 200ms;
+  --transition-timing: ease-in-out;
+}
+
+/* Apply transitions to themed elements */
+*,
+*::before,
+*::after {
+  transition: background-color var(--transition-duration) var(--transition-timing),
+              color var(--transition-duration) var(--transition-timing),
+              border-color var(--transition-duration) var(--transition-timing),
+              box-shadow var(--transition-duration) var(--transition-timing),
+              transform var(--transition-duration) var(--transition-timing);
+}
+
+/* Theme-aware component styles */
+.themed-bg {
+  background-color: var(--background-default);
+}
+
+.themed-bg-paper {
+  background-color: var(--background-paper);
+}
+
+.themed-bg-elevated {
+  background-color: var(--background-elevated);
+}
+
+.themed-text {
+  color: var(--text-primary);
+}
+
+.themed-text-secondary {
+  color: var(--text-secondary);
+}
+
+.themed-button {
+  background-color: var(--primary-main);
+  color: var(--text-primary);
+  transition: all 0.2s ease-in-out;
+}
+
+.themed-button:hover {
+  background-color: var(--primary-light);
+}
+
+.themed-button-outline {
+  color: var(--text-primary);
+  background: transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.themed-button-outline:hover {
+  background-color: var(--primary-main);
+  color: var(--background-default);
+}
+
+.themed-input {
+  background-color: var(--background-default);
+  color: var(--text-primary);
+}
+
+.themed-input:focus {
+  border-color: var(--primary-main);
+}
+
+/* Card styles */
+.themed-card {
+  background-color: var(--background-paper);
+}
+
+/* Modal styles */
+.themed-modal {
+  background-color: var(--background-paper) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 8px 16px -4px var(--shadow-color) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+/* Table styles */
+.themed-table th {
+  color: var(--primary-main) !important;
+  background: linear-gradient(to right, var(--background-paper), var(--background-elevated)) !important;
+}
+
+.themed-table td {
+  color: var(--text-primary) !important;
+}
+
+.themed-table tr:hover {
+  background-color: var(--background-elevated) !important;
+}
+
+/* Dashboard-specific styles */
+/* Sidebar specific styles */
+.themed-sidebar {
+  background-color: var(--background-paper) !important;
+  box-shadow: 4px 0 8px -4px var(--shadow-color) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.themed-nav-item {
+  color: var(--text-primary) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.themed-nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, var(--primary-main), var(--primary-light));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: -1;
+}
+
+.themed-nav-item:hover::before,
+.themed-nav-item.active::before {
+  opacity: 1;
+}
+
+.themed-nav-item:hover,
+.themed-nav-item.active {
+    color: var(--background-default) !important;
+  }
+  
+  .themed-nav-item svg {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* Ensure icons are always visible even when sidebar is collapsed */
+  .themed-nav-item.justify-center svg {
+    margin-right: 0 !important;
+    color: var(--text-primary);
+  }
+  
+  .themed-nav-item.active.justify-center svg,
+  .themed-nav-item.justify-center:hover svg {
+    color: var(--background-default);
+}
+
+/* Status indicators */
+.themed-success {
+  color: var(--success-main);
+}
+
+.themed-warning {
+  color: var(--warning-main);
+}
+
+.themed-error {
+  color: var(--error-main);
+}
+
+/* Force theme colors */
+.force-theme-bg {
+  background-color: var(--background-default) !important;
+}
+
+.force-theme-text {
+  color: var(--text-primary) !important;
+}
+
+/* Animation classes */
+.theme-fade-in {
+  animation: themeFadeIn 0.3s ease-out;
+}
+
+@keyframes themeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Icon specific styles */
+.themed-icon {
+  color: var(--secondary-main);
+  transition: color 0.2s ease-in-out;
+}
+
+.themed-icon:hover {
+  color: var(--secondary-light);
+}
+
+.themed-icon-bg {
+  background-color: var(--primary-main);
+  color: var(--background-default);
+  padding: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.themed-icon-bg:hover {
+  background-color: var(--primary-light);
+}
+
+.themed-icon-outline {
+  color: var(--secondary-main) !important;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all var(--transition-duration) var(--transition-timing);
+}
+
+.themed-icon-outline:hover {
+  background-color: var(--secondary-main) !important;
+  color: var(--background-default) !important;
+}
+
+/* Update nav item icons to use secondary color */
+.themed-nav-item svg {
+  color: var(--secondary-main) !important;
+}
+
+.themed-nav-item:hover svg,
+.themed-nav-item.active svg {
+  color: var(--text-primary) !important;
+}
+
+/* theme.css */
+[data-theme="light"] {
+    --shadow-color: rgba(0, 0, 0, 0.08);
+  }
+  
+  [data-theme="light"] .themed-card {
+    box-shadow: 0 2px 8px var(--shadow-color);
+  }
+  
+  [data-theme="light"] .themed-button {
+    background-color: var(--primary-main);
+    color: var(--background-paper);
+  }
+  
+  [data-theme="light"] .themed-button-outline {
+    color: var(--primary-main);
+  }
+  
+  [data-theme="light"] .themed-button-outline:hover {
+    background-color: var(--primary-main);
+    color: var(--background-paper);
+  }
+  
+  [data-theme="light"] .themed-icon {
+    color: var(--secondary-main);
+  }
+  
+  [data-theme="light"] .themed-icon-bg {
+    background-color: var(--secondary-main);
+    color: var(--background-paper);
+  }
+  /* theme.css */
+.themed-accent-olive {
+    color: var(--secondary-dark);
+    border-color: var(--secondary-dark);
+  }
+  
+  .themed-accent-terracotta {
+    color: var(--error-main);
+    border-color: var(--error-main);
+  }
+  
+  .themed-marble-pattern {
+    background-image: linear-gradient(
+      to right,
+      var(--background-paper) 0%,
+      var(--background-default) 100%
+    );
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .themed-marble-pattern::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.1;
+    background-image: url('data:image/svg+xml,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" /></filter><rect width="100%" height="100%" filter="url(%23n)" /></svg>');
+  }

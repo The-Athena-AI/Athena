@@ -121,7 +121,7 @@ const Home = () => {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 1 }}
             className="text-5xl font-bold text-center mb-16 text-yellow-400"
           >
             Why Choose Athena?
@@ -131,19 +131,19 @@ const Home = () => {
               title="AI Grading"
               description="Save hours with intelligent automated grading that provides detailed feedback."
               image={ResponseAndGrading}
-              delay={0.2}
+              delay={0.4}
             />
             <FeatureCard 
               title="Smart Feedback"
               description="Generate personalized feedback that helps students improve."
               image={FeedbackImage}
-              delay={0.4}
+              delay={0.5}
             />
             <FeatureCard 
               title="Interactive Rubrics"
               description="Create and manage detailed rubrics with ease."
               image={Rubric}
-              delay={0.6}
+              delay={0.4}
             />
           </div>
         </motion.div>
@@ -168,7 +168,7 @@ const Home = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                whileHover={{ y: -10 }}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
                 className="bg-gray-900/50 backdrop-blur-sm rounded-lg p-8 border border-yellow-400/20 hover:border-yellow-400/50 transition-all duration-300"
               >
                 <motion.div

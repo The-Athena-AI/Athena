@@ -1,7 +1,8 @@
 {
   "files": {
-    "main.css": "/static/css/main.88eeda6e.css",
-    "main.js": "/static/js/main.18f50122.js",
+    "main.css": "/static/css/main.7e361cc9.css",
+    "main.js": "/static/js/main.c901c976.js",
+    "static/js/952.bde75dc5.chunk.js": "/static/js/952.bde75dc5.chunk.js",
     "static/media/PerfectAthenaPhotoUpdated2.png": "/static/media/PerfectAthenaPhotoUpdated2.403ae59e5e50d49d7996.png",
     "static/media/ResponseAndGrading.png": "/static/media/ResponseAndGrading.927e3319cf0e573a432a.png",
     "static/media/TeacherDashboard.png": "/static/media/TeacherDashboard.b109a6e47661f08f7897.png",
@@ -11,11 +12,12 @@
     "static/media/Feedback.png": "/static/media/Feedback.67e62f9048f3460e4bc8.png",
     "static/media/athena-high-resolution-logo-transparent.png": "/static/media/athena-high-resolution-logo-transparent.f70cd753ecdf7f0e6388.png",
     "index.html": "/index.html",
-    "main.88eeda6e.css.map": "/static/css/main.88eeda6e.css.map",
-    "main.18f50122.js.map": "/static/js/main.18f50122.js.map"
+    "main.7e361cc9.css.map": "/static/css/main.7e361cc9.css.map",
+    "main.c901c976.js.map": "/static/js/main.c901c976.js.map",
+    "952.bde75dc5.chunk.js.map": "/static/js/952.bde75dc5.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.88eeda6e.css",
-    "static/js/main.18f50122.js"
+    "static/css/main.7e361cc9.css",
+    "static/js/main.c901c976.js"
   ]
 }

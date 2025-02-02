@@ -1,0 +1,15 @@
+
+Example format for rubric:
+{
+  "Introduction/Opening": {
+    "grade": 3,
+    "teacherJustification": "Strong thesis statement...",
+    "aiGrade": 3,
+    "aiJustification": "The introduction clearly states..."
+  },
+  "Text Evidence": {
+    "grade": 4,
+    "teacherJustification": "Excellent use of quotes..."
+  }
+  // ... other criteria
+}
