@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import StudentHome from '../studentComponents/studentHome';
 import StudentClasses from '../studentComponents/StudentClasses';
-import Sidebar from '../studentComponents/studentHomeComponents/Sidebar';
+import Sidebar from '../studentComponents/Sidebar';
 import StudentLecture from '../studentComponents/StudentLecture';
 import StudentAssignmentList from '../studentComponents/StudentAssignmentList';
 import StudentAssignmentView from '../studentComponents/StudentAssignmentView';

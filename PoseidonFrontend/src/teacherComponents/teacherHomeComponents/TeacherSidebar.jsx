@@ -80,7 +80,7 @@ const TeacherSidebar = ({ isOpen, setIsOpen, userId }) => {
             <button
               onClick={handleSignOut}
               className={`flex items-center w-full px-4 py-2 text-red-400 
-                hover:themed-bg-elevated rounded-lg transition-colors duration-200
+                hover:themed-bg rounded-lg transition-colors duration-200
                 ${isOpen ? "" : "justify-center"}`}
             >
               <FaSignOutAlt size={20} className={isOpen ? "mr-4" : ""} />

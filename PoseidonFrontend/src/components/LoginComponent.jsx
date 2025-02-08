@@ -49,6 +49,7 @@ const LoginComponent = ({ onClose }) => {
     }
   };
   console.log(`Debug: ${supabase}`);
+  console.log(`Window origin: ${window.location.origin}`)
 
   const handleGoogleSignIn = async () => {
     try {
@@ -61,6 +62,7 @@ const LoginComponent = ({ onClose }) => {
             prompt: 'consent'
           }
         }
+        
       });
 
       if (error) throw error;

@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Calendar from 'react-calendar';
 
-const Calendar = () => {
+const FuncCalendar = () => {
+  const [date, setDate] = useState(new Date());
+
+  const onChange = date =>{
+    setDate(date);
+  }
   return (
     <div className="calendar" style={{ backgroundColor: '#ECF0F1', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
-      <h2>My Progress</h2>
-      <div style={{ height: '150px', backgroundColor: '#BDC3C7', display: 'flex', justifyContent: 'center', alignItems: 'center', borderRadius: '10px' }}>Calendar Placeholder</div>
+      <Calendar onChange={onChange} value={date} />
     </div>
   );
 };
 
-export default Calendar;
+export default FuncCalendar;

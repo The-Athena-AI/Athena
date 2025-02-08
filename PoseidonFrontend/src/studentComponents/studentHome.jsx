@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Calendar from './studentHomeComponents/Calendar';
+import FuncCalendar from './studentHomeComponents/Calendar';
 import MasteryProgress from './studentHomeComponents/MasteryProgress';
 import MessagesPanel from './studentHomeComponents/MessagesPanel';
 import { supabase } from '../supabase';
@@ -370,7 +370,7 @@ const StudentHome = ({ userId }) => {
               animate={{ opacity: 1, y: 0 }}
               className="themed-card rounded-lg shadow-lg p-6"
             >
-              <Calendar />
+              <FuncCalendar />
             </motion.div>
 
             {/* Progress Component */}
