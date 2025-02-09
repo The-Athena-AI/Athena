@@ -80,7 +80,15 @@ def grade_assignment(completed_assignment_path, assignment, student_id, submissi
 
     print(rubric_file)
 
-    response = model.generate_content(f"Here is the assignment: {completed_file}\nHere is the rubric or answer key: {rubric_file}")
+    teacher_info = supabase_client.table("SubmittedAssignment").select("id, teacher_grade, teacher_feedback").eq("id", submission_id).execute()
+    data = teacher_info.data
+
+    teacher_grade = "The teacher graded this assignment: " + data[0]["teacher_grade"]
+    teacher_feedback = "\nThe teacher's feedback for this assignment: " + data[0]["teacher_feedback"]
+
+    chat = model.start_chat(history= teacher_grade + teacher_feedback)
+    
+    response = chat.send_message(f"Here is the assignment: {completed_file}\nHere is the rubric or answer key: {rubric_file}")
 
     if not response.text.strip():
         raise ValueError("Empty response from AI model. Check your model output.")
